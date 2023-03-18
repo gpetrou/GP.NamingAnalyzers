@@ -1,0 +1,24 @@
+﻿<Project>
+
+  <Target Condition=" '$(IsTestProject)' == 'false' "
+          Name="SetAssemblyInfoVersions"
+          AfterTargets="PrepareForBuild"
+          BeforeTargets="GenerateAssemblyInfo;GetPackageMetadata;GenerateNuspec;Pack"
+          DependsOnTargets="GitVersion;AddSourceRevisionToInformationalVersion">
+
+    <PropertyGroup>
+      <AssemblyVersion>$(GitBaseVersion)</AssemblyVersion>
+      <FileVersion>$(AssemblyVersion).$(GitCommits)</FileVersion>
+
+      <!-- When building from a regular commit. -->
+      <InformationalVersion>$(AssemblyVersion)-pre.$(GitCommits).g$(GitCommit)</InformationalVersion>
+      <PackageVersion>$(InformationalVersion)</PackageVersion>
+
+      <!-- When building from a tag. -->
+      <InformationalVersion Condition=" $([System.Text.RegularExpressions.Regex]::IsMatch($(GitTag), '^\d+\.\d+\.\d+$')) ">$(AssemblyVersion).$(GitCommits)-g$(GitCommit)</InformationalVersion>
+      <PackageVersion Condition=" $([System.Text.RegularExpressions.Regex]::IsMatch($(GitTag), '^\d+\.\d+\.\d+$')) ">$(AssemblyVersion)</PackageVersion>
+    </PropertyGroup>
+
+  </Target>
+
+</Project>

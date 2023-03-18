@@ -1,0 +1,80 @@
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - '[0-9]+.[0-9]+.[0-9]+'
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  make:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Display .NET version
+        run: dotnet --version
+      - name: NuGet cache
+        uses: actions/cache@v3
+        with:
+          path: ~/.nuget
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj', '**/*.props', '**/*.targets') }}
+          restore-keys: ${{ runner.os }}-nuget-
+      - name: Build
+        shell: pwsh
+        run: ./Make.ps1 build
+      - name: Upload Binlog
+        uses: actions/upload-artifact@v3
+        with:
+          name: Binlog
+          path: './artifacts/Build/Release/GP.NamingAnalyzers.binlog'
+      - name: Test
+        shell: pwsh
+        run: ./Make.ps1 test
+      - name: Download and extract coverage history
+        shell: pwsh
+        run: |
+          Invoke-WebRequest -Uri "https://gist.github.com/gpetrou/954e28ce3848f0e2002cf48dffb2ba23/raw/GP.NamingAnalyzers.CoverageHistory.zip" -OutFile ./artifacts/Coverage/History.zip
+          Expand-Archive -Path ./artifacts/Coverage/History.zip -DestinationPath ./artifacts/Coverage
+          Remove-Item ./artifacts/Coverage/History.zip
+      - name: Coverage
+        shell: pwsh
+        run: ./Make.ps1 coverage
+      - name: Upload coverage
+        uses: actions/upload-artifact@v3
+        with:
+          name: CoverageReport
+          path: './artifacts/Coverage/Report'
+      - name: Zip coverage history
+        shell: pwsh
+        run: |
+          Get-ChildItem -Path ./artifacts/Coverage/History | Sort-Object -Descending -Property Name | Select-Object -Skip 100 | Remove-Item
+          Compress-Archive -Path ./artifacts/Coverage/History -DestinationPath ./artifacts/Coverage/History.zip
+      - name: Upload coverage history
+        uses: exuanbo/actions-deploy-gist@v1.1.4
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        with:
+          token: ${{ secrets.GIST_TOKEN }}
+          gist_id: 954e28ce3848f0e2002cf48dffb2ba23
+          file_path: ./artifacts/Coverage/History.zip
+          gist_file_name: GP.NamingAnalyzers.CoverageHistory.zip
+          gist_description: GP.NamingAnalyzers Coverage History
+          file_type: binary
+      - name: Upload coverage badge
+        uses: exuanbo/actions-deploy-gist@v1.1.4
+        if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+        with:
+          token: ${{ secrets.GIST_TOKEN }}
+          gist_id: 2bff300554a87dafa514413903d10998
+          file_path: ./artifacts/Coverage/Report/badge_combined.svg
+          gist_file_name: GP.NamingAnalyzers.CoverageBadge.svg
+          gist_description: GP.NamingAnalyzers Coverage Badge
+      - name: Pack
+        shell: pwsh
+        run: ./Make.ps1 pack
+      - name: Upload NuGet package
+        uses: actions/upload-artifact@v3
+        with:
+          name: NuGetPackage
+          path: './artifacts/Build/Release/GP.NamingAnalyzers.Package/*.nupkg'

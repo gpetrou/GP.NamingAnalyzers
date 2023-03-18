@@ -1,0 +1,84 @@
+﻿<Project>
+
+  <!-- Properties used by all projects. -->
+  <PropertyGroup>
+    <LangVersion>10.0</LangVersion>
+    <Features>strict</Features>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <Authors>gpetrou</Authors>
+    <Company>$(Authors)</Company>
+    <Product>GP Naming Analyzers</Product>
+    <Copyright>Copyright © 2023 gpetrou</Copyright>
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>6.0</AnalysisLevel>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <IntermediatePath>$(MSBuildThisFileDirectory)artifacts\Intermediate</IntermediatePath>
+    <BuildPath>$(MSBuildThisFileDirectory)artifacts\Build\</BuildPath>
+    <BaseIntermediateOutputPath>$(IntermediatePath)\$(Configuration)\$(MSBuildProjectName)\</BaseIntermediateOutputPath>
+    <IntermediateOutputPath>$(BaseIntermediateOutputPath)</IntermediateOutputPath>
+    <OutputPath>$(BuildPath)$(Configuration)\$(MSBuildProjectName)\</OutputPath>
+    <IsTestProject>false</IsTestProject>
+    <IsTestProject Condition="$(MSBuildProjectName.EndsWith('Test'))">true</IsTestProject>
+  </PropertyGroup>
+
+  <!-- To be redefined by GitInfo after restore. -->
+  <Target Condition=" '$(IsTestProject)' == 'false' " Name="GitVersion" />
+
+  <!-- Items used by all projects. -->
+  <ItemGroup>
+    <AdditionalFiles Include="$(MSBuildThisFileDirectory)stylecop.json">
+      <Link>stylecop.json</Link>
+    </AdditionalFiles>
+    <EditorConfigFiles Include="$(MSBuildThisFileDirectory)eng\CodeAnalysis.IDE.globalconfig" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.435">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <!-- Properties used only by the main projects. -->
+  <PropertyGroup Condition=" '$(IsTestProject)' == 'false' ">
+    <GitDefaultBranch>main</GitDefaultBranch>
+    <GitVersionFile>Version.txt</GitVersionFile>
+    <GitBaseVersionRegex>^\d+\.\d+\.\d+$</GitBaseVersionRegex>
+    <GitTagRegex>[0-9]*.[0-9]*.[0-9]*</GitTagRegex>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <!-- Items used only by the main projects. -->
+  <ItemGroup Condition=" '$(IsTestProject)' == 'false' ">
+    <EditorConfigFiles Include="$(MSBuildThisFileDirectory)eng\CodeAnalysis.NetAnalyzers.src.globalconfig" />
+    <EditorConfigFiles Include="$(MSBuildThisFileDirectory)eng\CodeAnalysis.StyleCop.src.globalconfig" />
+    <PackageReference Include="GitInfo" Version="2.3.0" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+
+  <!-- Properties used only by the test projects. -->
+  <PropertyGroup Condition=" '$(IsTestProject)' == 'true' ">
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <!-- Items used only by the test projects. -->
+  <ItemGroup Condition=" '$(IsTestProject)' == 'true' ">
+    <EditorConfigFiles Include="$(MSBuildThisFileDirectory)eng\CodeAnalysis.NetAnalyzers.tests.globalconfig" />
+    <EditorConfigFiles Include="$(MSBuildThisFileDirectory)eng\CodeAnalysis.StyleCop.tests.globalconfig" />
+    <PackageReference Include="coverlet.collector" Version="3.2.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="FluentAssertions" Version="6.8.0" />
+    <PackageReference Include="JunitXml.TestLogger" Version="3.0.114" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.4.0" />
+    <PackageReference Include="xunit.analyzers" Version="1.0.0" />
+    <PackageReference Include="xunit.core" Version="2.4.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+  </ItemGroup>
+
+</Project>

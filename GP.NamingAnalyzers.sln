@@ -1,0 +1,82 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.33502.453
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GP.NamingAnalyzers", "src\GP.NamingAnalyzers\GP.NamingAnalyzers.csproj", "{DD3735AA-AEC5-4D43-B31D-BCFBAD7F3F36}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GP.NamingAnalyzers.CodeFixes", "src\GP.NamingAnalyzers.CodeFixes\GP.NamingAnalyzers.CodeFixes.csproj", "{1A293C6D-B51D-4CE8-958C-E17E14587731}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GP.NamingAnalyzers.Package", "src\GP.NamingAnalyzers.Package\GP.NamingAnalyzers.Package.csproj", "{AAD43A76-A570-4AD5-B924-8FF44CDB4A71}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GP.NamingAnalyzers.Test", "tests\GP.NamingAnalyzers.Test\GP.NamingAnalyzers.Test.csproj", "{73351170-BBE3-4A39-9408-95FB6057F9E4}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GP.NamingAnalyzers.Vsix", "src\GP.NamingAnalyzers.Vsix\GP.NamingAnalyzers.Vsix.csproj", "{C58A93D6-9F5A-4823-A4F1-376A00BC84F2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{4C03AD3B-BA5C-4C5B-B145-E9132C623F3E}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{BC5411A1-E453-4620-95D4-806577100AFB}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+		.gitattributes = .gitattributes
+		.gitignore = .gitignore
+		Directory.Build.props = Directory.Build.props
+		Directory.Build.targets = Directory.Build.targets
+		License.md = License.md
+		Make.ps1 = Make.ps1
+		Readme.md = Readme.md
+		SpellingExclusion.dic = SpellingExclusion.dic
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{5769FA60-9F5D-4ACC-8B45-74A4E35409F7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "eng", "eng", "{B0A16B6E-8174-4199-B9D6-79531F946333}"
+	ProjectSection(SolutionItems) = preProject
+		eng\CodeAnalysis.IDE.globalconfig = eng\CodeAnalysis.IDE.globalconfig
+		eng\CodeAnalysis.NetAnalyzers.src.globalconfig = eng\CodeAnalysis.NetAnalyzers.src.globalconfig
+		eng\CodeAnalysis.NetAnalyzers.tests.globalconfig = eng\CodeAnalysis.NetAnalyzers.tests.globalconfig
+		eng\CodeAnalysis.StyleCop.src.globalconfig = eng\CodeAnalysis.StyleCop.src.globalconfig
+		eng\CodeAnalysis.StyleCop.tests.globalconfig = eng\CodeAnalysis.StyleCop.tests.globalconfig
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DD3735AA-AEC5-4D43-B31D-BCFBAD7F3F36}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DD3735AA-AEC5-4D43-B31D-BCFBAD7F3F36}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DD3735AA-AEC5-4D43-B31D-BCFBAD7F3F36}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DD3735AA-AEC5-4D43-B31D-BCFBAD7F3F36}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1A293C6D-B51D-4CE8-958C-E17E14587731}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1A293C6D-B51D-4CE8-958C-E17E14587731}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1A293C6D-B51D-4CE8-958C-E17E14587731}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1A293C6D-B51D-4CE8-958C-E17E14587731}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AAD43A76-A570-4AD5-B924-8FF44CDB4A71}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AAD43A76-A570-4AD5-B924-8FF44CDB4A71}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AAD43A76-A570-4AD5-B924-8FF44CDB4A71}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AAD43A76-A570-4AD5-B924-8FF44CDB4A71}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73351170-BBE3-4A39-9408-95FB6057F9E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73351170-BBE3-4A39-9408-95FB6057F9E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73351170-BBE3-4A39-9408-95FB6057F9E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73351170-BBE3-4A39-9408-95FB6057F9E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C58A93D6-9F5A-4823-A4F1-376A00BC84F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C58A93D6-9F5A-4823-A4F1-376A00BC84F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C58A93D6-9F5A-4823-A4F1-376A00BC84F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C58A93D6-9F5A-4823-A4F1-376A00BC84F2}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{DD3735AA-AEC5-4D43-B31D-BCFBAD7F3F36} = {4C03AD3B-BA5C-4C5B-B145-E9132C623F3E}
+		{1A293C6D-B51D-4CE8-958C-E17E14587731} = {4C03AD3B-BA5C-4C5B-B145-E9132C623F3E}
+		{AAD43A76-A570-4AD5-B924-8FF44CDB4A71} = {4C03AD3B-BA5C-4C5B-B145-E9132C623F3E}
+		{73351170-BBE3-4A39-9408-95FB6057F9E4} = {5769FA60-9F5D-4ACC-8B45-74A4E35409F7}
+		{C58A93D6-9F5A-4823-A4F1-376A00BC84F2} = {4C03AD3B-BA5C-4C5B-B145-E9132C623F3E}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {F2D174CA-435F-4901-92F7-5A34941A328E}
+	EndGlobalSection
+EndGlobal

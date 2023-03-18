@@ -1,0 +1,9 @@
+{
+  "$schema": "https://raw.githubusercontent.com/DotNetAnalyzers/StyleCopAnalyzers/master/StyleCop.Analyzers/StyleCop.Analyzers/Settings/stylecop.schema.json",
+  "settings": {
+    "documentationRules": {
+      "copyrightText": "Copyright (c) gpetrou. All Rights Reserved.\r\nLicensed under the MIT License. See License.md in the project root for license information.",
+      "xmlHeader": false
+    }
+  }
+}
