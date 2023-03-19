@@ -10,7 +10,7 @@ namespace GP.NamingAnalyzers.Test;
 public static partial class VisualBasicAnalyzerVerifier<TAnalyzer>
     where TAnalyzer : DiagnosticAnalyzer, new()
 {
-    public class Test : VisualBasicAnalyzerTest<TAnalyzer, XUnitVerifier>
+    private class Test : VisualBasicAnalyzerTest<TAnalyzer, XUnitVerifier>
     {
         public Test()
         {

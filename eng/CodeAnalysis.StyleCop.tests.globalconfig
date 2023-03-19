@@ -1,7 +1,7 @@
 is_global = true
 
 # XML comment analysis disabled
-dotnet_diagnostic.SA0001.severity = warning
+dotnet_diagnostic.SA0001.severity = none
 
 # Invalid settings file
 dotnet_diagnostic.SA0002.severity = warning

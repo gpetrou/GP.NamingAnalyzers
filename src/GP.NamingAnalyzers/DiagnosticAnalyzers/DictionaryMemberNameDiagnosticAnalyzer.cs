@@ -4,12 +4,16 @@
 using System.Collections;
 using System.Collections.Immutable;
 using System.Text.RegularExpressions;
+using GP.NamingAnalyzers.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Operations;
 
 namespace GP.NamingAnalyzers.DiagnosticAnalyzers;
 
+/// <summary>
+/// An analyzer to validate dictionary names.
+/// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
 public sealed class DictionaryMemberNameDiagnosticAnalyzer : DiagnosticAnalyzer
 {
@@ -18,7 +22,7 @@ public sealed class DictionaryMemberNameDiagnosticAnalyzer : DiagnosticAnalyzer
     private const string MessageFormat = "Dictionary '{0}' does not follow the 'xsByY' naming convention";
     private const string Description = "A dictionary name should follow the 'xsByY' naming convention.";
     private const string Category = "Naming";
-    private const string HelpLinkUri = "https://github.com/gpetrou/GP.NamingAnalyzers/tree/main/docs/GPNA0001.md";
+    private const string HelpLinkUri = $"https://github.com/gpetrou/GP.NamingAnalyzers/tree/main/docs/{DiagnosticId}.md";
 
     private static readonly DiagnosticDescriptor DiagnosticDescriptor = new(
         DiagnosticId,
@@ -35,14 +39,11 @@ public sealed class DictionaryMemberNameDiagnosticAnalyzer : DiagnosticAnalyzer
     /// <inheritdoc/>
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DiagnosticDescriptor);
 
-    public static bool IsNamedTypeSymbolOrImplementsNamedTypeSymbolInterface(ITypeSymbol typeSymbol, INamedTypeSymbol namedTypeSymbol)
-    {
-        bool isNamedTypeSymbol = typeSymbol.OriginalDefinition.Equals(namedTypeSymbol, SymbolEqualityComparer.Default);
-        bool implementsDictionaryInterface = typeSymbol.AllInterfaces.Any(namedTypeSymbol => namedTypeSymbol.Equals(namedTypeSymbol, SymbolEqualityComparer.Default));
-
-        return isNamedTypeSymbol || implementsDictionaryInterface;
-    }
-
+    /// <summary>
+    /// Returns a value indicating whether the provided name is a valid dictionary name.
+    /// </summary>
+    /// <param name="name">The name to validate.</param>
+    /// <returns><see langword="true"/> if the provided name is a valid dictionary name; otherwise, <see langword="false"/>.</returns>
     public static bool IsDictionaryNameValid(string name) =>
         !string.IsNullOrWhiteSpace(name) &&
         name.IndexOf("Dictionary", StringComparison.OrdinalIgnoreCase) == -1 &&
@@ -60,7 +61,7 @@ public sealed class DictionaryMemberNameDiagnosticAnalyzer : DiagnosticAnalyzer
         {
             if (symbol is IFieldSymbol fieldSymbol)
             {
-                if (IsNamedTypeSymbolOrImplementsNamedTypeSymbolInterface(fieldSymbol.Type, dictionarySymbol) && !IsDictionaryNameValid(fieldSymbol.Name))
+                if (fieldSymbol.Type.HasOriginalDefinitionOrImplementsNamedTypeSymbolInterface(dictionarySymbol) && !IsDictionaryNameValid(fieldSymbol.Name))
                 {
                     Diagnostic diagnostic = Diagnostic.Create(DiagnosticDescriptor, symbol.Locations[0], fieldSymbol.Name);
                     context.ReportDiagnostic(diagnostic);
@@ -71,7 +72,7 @@ public sealed class DictionaryMemberNameDiagnosticAnalyzer : DiagnosticAnalyzer
 
             if (symbol is IPropertySymbol propertySymbol)
             {
-                if (IsNamedTypeSymbolOrImplementsNamedTypeSymbolInterface(propertySymbol.Type, dictionarySymbol) && !IsDictionaryNameValid(propertySymbol.Name))
+                if (propertySymbol.Type.HasOriginalDefinitionOrImplementsNamedTypeSymbolInterface(dictionarySymbol) && !IsDictionaryNameValid(propertySymbol.Name))
                 {
                     Diagnostic diagnostic = Diagnostic.Create(DiagnosticDescriptor, symbol.Locations[0], propertySymbol.Name);
                     context.ReportDiagnostic(diagnostic);
@@ -82,7 +83,7 @@ public sealed class DictionaryMemberNameDiagnosticAnalyzer : DiagnosticAnalyzer
 
             if (symbol is IParameterSymbol parameterSymbol)
             {
-                if (IsNamedTypeSymbolOrImplementsNamedTypeSymbolInterface(parameterSymbol.Type, dictionarySymbol) && !IsDictionaryNameValid(parameterSymbol.Name))
+                if (parameterSymbol.Type.HasOriginalDefinitionOrImplementsNamedTypeSymbolInterface(dictionarySymbol) && !IsDictionaryNameValid(parameterSymbol.Name))
                 {
                     Diagnostic diagnostic = Diagnostic.Create(DiagnosticDescriptor, symbol.Locations[0], parameterSymbol.Name);
                     context.ReportDiagnostic(diagnostic);
@@ -108,7 +109,7 @@ public sealed class DictionaryMemberNameDiagnosticAnalyzer : DiagnosticAnalyzer
                 {
                     foreach (INamedTypeSymbol dictionarySymbol in dictionarySymbols)
                     {
-                        if (IsNamedTypeSymbolOrImplementsNamedTypeSymbolInterface(localSymbol.Type, dictionarySymbol) && !IsDictionaryNameValid(localSymbol.Name))
+                        if (localSymbol.Type.HasOriginalDefinitionOrImplementsNamedTypeSymbolInterface(dictionarySymbol) && !IsDictionaryNameValid(localSymbol.Name))
                         {
                             Diagnostic diagnostic = Diagnostic.Create(DiagnosticDescriptor, localSymbol.Locations[0], localSymbol.Name);
                             context.ReportDiagnostic(diagnostic);
