@@ -1,6 +1,6 @@
 <div align="center">
 
-![logo](./images/logo.svg)
+![logo](./images/Logo.svg)
 
 <h1>Naming Analyzers</h1>
 
