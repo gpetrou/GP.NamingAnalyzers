@@ -18,6 +18,7 @@ Set-StrictMode -Version Latest
 $errorActionPreference = "Stop"
 
 $env:DOTNET_CLI_TELEMETRY_OPTOUT = 1
+$env:IsTreatWarningsAsErrorsEnabled = $true
 
 Set-Variable SolutionName -Option Constant -Value "GP.NamingAnalyzers" -Force -ErrorAction SilentlyContinue
 Set-Variable SolutionPath -Option Constant -Value "$PSScriptRoot/$SolutionName.sln" -Force -ErrorAction SilentlyContinue

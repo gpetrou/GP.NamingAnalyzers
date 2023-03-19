@@ -25,6 +25,11 @@
   <!-- To be redefined by GitInfo after restore. -->
   <Target Condition=" '$(IsTestProject)' == 'false' " Name="GitVersion" />
 
+  <!-- Treat warnings as errors when the corresponding environment variable is set. -->
+  <PropertyGroup Condition=" '$(IsTreatWarningsAsErrorsEnabled)' == 'true' ">
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
   <!-- Items used by all projects. -->
   <ItemGroup>
     <AdditionalFiles Include="$(MSBuildThisFileDirectory)stylecop.json">
