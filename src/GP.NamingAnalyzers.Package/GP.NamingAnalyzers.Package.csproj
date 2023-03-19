@@ -11,11 +11,11 @@
     <PackageId>GP.NamingAnalyzers</PackageId>
     <Authors>gpetrou</Authors>
     <PackageLicenseFile>License.md</PackageLicenseFile>
+    <PackageIcon>Logo.png</PackageIcon>
     <PackageProjectUrl>https://github.com/gpetrou/GP.NamingAnalyzers</PackageProjectUrl>
-    <PackageIconUrl>https://github.com/gpetrou/GP.NamingAnalyzers/blob/main/images/logo.svg</PackageIconUrl>
     <RepositoryUrl>https://github.com/gpetrou/GP.NamingAnalyzers</RepositoryUrl>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
-    <Description>GP.NamingAnalyzers</Description>
+    <Description>A collection of Roslyn analyzers for naming conventions.</Description>
     <PackageReleaseNotes>Summary of changes made in this release of the package.</PackageReleaseNotes>
     <PackageTags>GP.NamingAnalyzers, analyzers</PackageTags>
     <DevelopmentDependency>true</DevelopmentDependency>
@@ -25,6 +25,7 @@
 
   <ItemGroup>
     <None Include="../../License.md" Pack="true" PackagePath="License.md" />
+    <None Include="../../images/logo.png" Pack="true" PackagePath="Logo.png" />
   </ItemGroup>
 
   <ItemGroup>
