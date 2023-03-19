@@ -42,6 +42,7 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{38E22441-541F-41A7-BD63-8E29EBA24134}"
 	ProjectSection(SolutionItems) = preProject
 		docs\GPNA0001.md = docs\GPNA0001.md
+		docs\GPNA0002.md = docs\GPNA0002.md
 		docs\Rules.md = docs\Rules.md
 	EndProjectSection
 EndProject

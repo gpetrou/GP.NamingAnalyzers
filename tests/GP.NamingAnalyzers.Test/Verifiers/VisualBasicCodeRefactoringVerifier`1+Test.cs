@@ -10,7 +10,7 @@ namespace GP.NamingAnalyzers.Test;
 public static partial class VisualBasicCodeRefactoringVerifier<TCodeRefactoring>
     where TCodeRefactoring : CodeRefactoringProvider, new()
 {
-    public class Test : VisualBasicCodeRefactoringTest<TCodeRefactoring, XUnitVerifier>
+    private class Test : VisualBasicCodeRefactoringTest<TCodeRefactoring, XUnitVerifier>
     {
     }
 }

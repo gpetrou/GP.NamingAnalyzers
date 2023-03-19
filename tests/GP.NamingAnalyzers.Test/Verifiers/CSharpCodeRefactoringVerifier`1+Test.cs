@@ -10,13 +10,13 @@ namespace GP.NamingAnalyzers.Test;
 public static partial class CSharpCodeRefactoringVerifier<TCodeRefactoring>
     where TCodeRefactoring : CodeRefactoringProvider, new()
 {
-    public class Test : CSharpCodeRefactoringTest<TCodeRefactoring, XUnitVerifier>
+    private class Test : CSharpCodeRefactoringTest<TCodeRefactoring, XUnitVerifier>
     {
         public Test() =>
             SolutionTransforms.Add((solution, projectId) =>
             {
                 Microsoft.CodeAnalysis.CompilationOptions? compilationOptions = solution.GetProject(projectId)?.CompilationOptions;
-                compilationOptions = compilationOptions.WithSpecificDiagnosticOptions(
+                compilationOptions = compilationOptions?.WithSpecificDiagnosticOptions(
                     compilationOptions.SpecificDiagnosticOptions.SetItems(CSharpVerifierHelper.NullableWarnings));
                 solution = solution.WithProjectCompilationOptions(projectId, compilationOptions);
 
