@@ -9,4 +9,4 @@
 
 </div>
 
-A collection of Roslyn analyzers for naming conventions.
+A [collection](./docs/Rules.md) of Roslyn analyzers for naming conventions.
