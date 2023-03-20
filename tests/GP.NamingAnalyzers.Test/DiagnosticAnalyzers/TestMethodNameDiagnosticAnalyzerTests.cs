@@ -83,6 +83,11 @@ namespace WrongTestMethodNameExample
         public void PassingTest()
         {
         }
+
+        [Fact]
+        public void GetValues_WhenInputIsInvalid_ShouldThrowInvalidOperationException()
+        {
+        }
     }
 }";
 
@@ -111,6 +116,11 @@ namespace WrongTestMethodNameExample
         public void PassingTest()
         {
         }
+
+        [Test]
+        public void GetValues_WhenInputIsInvalid_ShouldThrowInvalidOperationException()
+        {
+        }
     }
 }";
 
@@ -137,6 +147,11 @@ namespace WrongTestMethodNameExample
     {
         [TestMethod]
         public void PassingTest()
+        {
+        }
+
+        [TestMethod]
+        public void GetValues_WhenInputIsInvalid_ShouldThrowInvalidOperationException()
         {
         }
     }
@@ -168,6 +183,12 @@ namespace WrongTestMethodNameExample
         public void PassingTest(int value)
         {
         }
+
+        [Theory]
+        [InlineData(1)]
+        public void GetValues_WhenInputIsInvalid_ShouldThrowInvalidOperationException(int index)
+        {
+        }
     }
 }";
 
@@ -194,6 +215,11 @@ namespace WrongTestMethodNameExample
     {
         [Theory]
         public void PassingTest(int value)
+        {
+        }
+
+        [Theory]
+        public void GetValues_WhenInputIsInvalid_ShouldThrowInvalidOperationException(int index)
         {
         }
     }
