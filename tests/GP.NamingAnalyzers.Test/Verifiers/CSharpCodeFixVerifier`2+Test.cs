@@ -6,7 +6,7 @@ using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Diagnostics;
 using Microsoft.CodeAnalysis.Testing.Verifiers;
 
-namespace GP.NamingAnalyzers.Test;
+namespace GP.NamingAnalyzers.Test.Verifiers;
 
 public static partial class CSharpCodeFixVerifier<TAnalyzer, TCodeFix>
     where TAnalyzer : DiagnosticAnalyzer, new()
@@ -19,7 +19,7 @@ public static partial class CSharpCodeFixVerifier<TAnalyzer, TCodeFix>
             {
                 Microsoft.CodeAnalysis.CompilationOptions? compilationOptions = solution.GetProject(projectId)?.CompilationOptions;
                 compilationOptions = compilationOptions?.WithSpecificDiagnosticOptions(
-                    compilationOptions?.SpecificDiagnosticOptions.SetItems(CSharpVerifierHelper.NullableWarnings));
+                    compilationOptions?.SpecificDiagnosticOptions.SetItems(CSharpVerifierHelper.NullableWarningsByDiagnosticId));
                 solution = solution.WithProjectCompilationOptions(projectId, compilationOptions!);
 
                 return solution;
