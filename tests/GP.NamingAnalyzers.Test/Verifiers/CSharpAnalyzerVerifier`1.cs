@@ -1,6 +1,7 @@
 ﻿// Copyright (c) gpetrou. All Rights Reserved.
 // Licensed under the MIT License. See License.md in the project root for license information.
 
+using System.Collections.Immutable;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Testing;
 using Microsoft.CodeAnalysis.Diagnostics;
@@ -29,6 +30,11 @@ public static partial class CSharpAnalyzerVerifier<TAnalyzer>
     {
         CSharpAnalyzerVerifier<TAnalyzer>.Test test = new()
         {
+            ReferenceAssemblies = ReferenceAssemblies.Default.AddPackages(
+                ImmutableArray.Create(
+                    new PackageIdentity("xunit", "2.4.2"),
+                    new PackageIdentity("Nunit", "3.13.3"),
+                    new PackageIdentity("MSTest.TestFramework", "3.0.2"))),
             TestCode = source
         };
 
