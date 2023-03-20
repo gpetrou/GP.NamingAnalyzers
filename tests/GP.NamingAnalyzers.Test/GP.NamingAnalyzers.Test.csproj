@@ -4,6 +4,7 @@
     <TargetFramework>net6.0</TargetFramework>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <GenerateBindingRedirectsOutputType>true</GenerateBindingRedirectsOutputType>
+    <AnalyzersOutputPath>..\..\artifacts\Build\$(Configuration)\GP.NamingAnalyzers\GP.NamingAnalyzers.dll</AnalyzersOutputPath>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,6 +20,10 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\GP.NamingAnalyzers.CodeFixes\GP.NamingAnalyzers.CodeFixes.csproj" />
     <ProjectReference Include="..\..\src\GP.NamingAnalyzers\GP.NamingAnalyzers.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Analyzer Include="$(AnalyzersOutputPath)" />
   </ItemGroup>
 
 </Project>

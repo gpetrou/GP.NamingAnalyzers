@@ -4,7 +4,7 @@
 using Microsoft.CodeAnalysis.CodeRefactorings;
 using Microsoft.CodeAnalysis.Testing;
 
-namespace GP.NamingAnalyzers.Test;
+namespace GP.NamingAnalyzers.Test.Verifiers;
 
 public static partial class CSharpCodeRefactoringVerifier<TCodeRefactoring>
     where TCodeRefactoring : CodeRefactoringProvider, new()
@@ -23,7 +23,7 @@ public static partial class CSharpCodeRefactoringVerifier<TCodeRefactoring>
         CSharpCodeRefactoringVerifier<TCodeRefactoring>.Test test = new()
         {
             TestCode = source,
-            FixedCode = fixedSource,
+            FixedCode = fixedSource
         };
 
         test.ExpectedDiagnostics.AddRange(expected);

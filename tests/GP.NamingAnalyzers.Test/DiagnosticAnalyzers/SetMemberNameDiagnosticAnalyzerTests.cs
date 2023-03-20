@@ -6,40 +6,75 @@ using GP.NamingAnalyzers.DiagnosticAnalyzers;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Testing;
 using Xunit;
-using VerifyCS = GP.NamingAnalyzers.Test.CSharpAnalyzerVerifier<GP.NamingAnalyzers.DiagnosticAnalyzers.SetMemberNameDiagnosticAnalyzer>;
+using VerifyCS = GP.NamingAnalyzers.Test.Verifiers.CSharpAnalyzerVerifier<GP.NamingAnalyzers.DiagnosticAnalyzers.SetMemberNameDiagnosticAnalyzer>;
 
 namespace GP.NamingAnalyzers.Test.DiagnosticAnalyzers;
 
 public sealed class SetMemberNameDiagnosticAnalyzerTests
 {
     [Theory]
-    [InlineData(null, false)]
-    [InlineData("", false)]
-    [InlineData(" ", false)]
-    [InlineData("_mySet", false)]
-    [InlineData("items", false)]
-    [InlineData("unique", false)]
-    [InlineData("uniqueXsSet", false)]
-    [InlineData("uniqueXs", true)]
-    public void IsSetNameValid_WhenProvidedWithParameter_ShouldReturnExpectedValue(string setName, bool expectedResult)
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData(" ")]
+    [InlineData("_mySet")]
+    [InlineData("items")]
+    [InlineData("unique")]
+    [InlineData("uniqueXsSet")]
+    public void IsSetNameValid_WhenNameIsInvalid_ShouldReturnFalse(string setName)
     {
         bool isNameValid = SetMemberNameDiagnosticAnalyzer.IsSetNameValid(setName);
 
-        isNameValid.Should().Be(expectedResult);
+        isNameValid.Should().BeFalse();
+    }
+
+    [Theory]
+    [InlineData("uniqueXs")]
+    [InlineData("uniqueItems")]
+    public void IsSetNameValid_WhenNameIsValid_ShouldReturnTrue(string setName)
+    {
+        bool isNameValid = SetMemberNameDiagnosticAnalyzer.IsSetNameValid(setName);
+
+        isNameValid.Should().BeTrue();
     }
 
     [Fact]
     public async Task Analyze_WhenCodeIsEmpty_ShouldNotReportADiagnostic()
     {
-        const string test = @"";
+        const string sourceCode = "";
 
-        await VerifyCS.VerifyAnalyzerAsync(test);
+        await VerifyCS.VerifyAnalyzerAsync(sourceCode);
+    }
+
+    [Fact]
+    public async Task Analyze_WhenMembersAreNotSets_ShouldNotReportADiagnostic()
+    {
+        string sourceCode = @"
+using System;
+using System.Collections.Generic;
+
+namespace N
+{
+    public class Example
+    {
+        private int IntegerField;
+        private string StringProperty { get; set; }
+
+        public float Check(List<double> listParameter)
+        {
+            bool booleanVariable = true;
+
+            return 1.0f;
+        }
+    }
+}";
+
+        await VerifyCS.VerifyAnalyzerAsync(sourceCode);
     }
 
     [Theory]
     [InlineData("ISet<string>", 30, 36)]
     [InlineData("HashSet<string>", 33, 39)]
-    [InlineData("IImmutableSet<string>", 39, 45)]
+    [InlineData("ImmutableHashSet<string>", 42, 48)]
     public async Task Analyze_WhenSetFieldNameIsInvalid_ShouldReportDiagnostic(
         string fieldType,
         int expectedStartColumn,
@@ -73,9 +108,9 @@ namespace N
     [Theory]
     [InlineData("ISet<string>", 29, 33)]
     [InlineData("HashSet<string>", 32, 36)]
-    [InlineData("IImmutableSet<string>", 38, 42)]
+    [InlineData("ImmutableHashSet<string>", 41, 45)]
     public async Task Analyze_WhenSetPropertyNameIsInvalid_ShouldReportDiagnostic(
-        string fieldType,
+        string propertyType,
         int expectedStartColumn,
         int expectedEndColumn)
     {
@@ -88,8 +123,8 @@ namespace N
 {{
     public class Example
     {{
-        public {fieldType} ASet {{ get; set; }}
-        public {fieldType} UniqueItems {{ get; set; }}
+        public {propertyType} ASet {{ get; set; }}
+        public {propertyType} UniqueItems {{ get; set; }}
     }}
 }}";
 
@@ -107,9 +142,9 @@ namespace N
     [Theory]
     [InlineData("ISet<string>", 40, 44)]
     [InlineData("HashSet<string>", 43, 47)]
-    [InlineData("IImmutableSet<string>", 49, 53)]
+    [InlineData("ImmutableHashSet<string>", 52, 56)]
     public async Task Analyze_WhenSetParameterNameIsInvalid_ShouldReportDiagnostic(
-        string fieldType,
+        string parameterType,
         int expectedStartColumn,
         int expectedEndColumn)
     {
@@ -122,11 +157,11 @@ namespace N
 {{
     public class Example
     {{
-        public void Check({fieldType} aSet)
+        public void Check({parameterType} aSet)
         {{
         }}
 
-        public void CheckOnceMore({fieldType} uniqueItems)
+        public void CheckOnceMore({parameterType} uniqueItems)
         {{
         }}
     }}
@@ -146,9 +181,9 @@ namespace N
     [Theory]
     [InlineData("ISet<string>", 26, 30)]
     [InlineData("HashSet<string>", 29, 33)]
-    [InlineData("IImmutableSet<string>", 35, 39)]
+    [InlineData("ImmutableHashSet<string>", 38, 42)]
     public async Task Analyze_WhenSetVariableNameIsInvalid_ShouldReportDiagnostic(
-        string fieldType,
+        string variableType,
         int expectedStartColumn,
         int expectedEndColumn)
     {
@@ -163,12 +198,12 @@ namespace N
     {{
         public void Check()
         {{
-            {fieldType} aSet = null;
+            {variableType} aSet = null;
         }}
 
         public void CheckOnceMore()
         {{
-            {fieldType} uniqueItems = null;
+            {variableType} uniqueItems = null;
         }}
     }}
 }}";

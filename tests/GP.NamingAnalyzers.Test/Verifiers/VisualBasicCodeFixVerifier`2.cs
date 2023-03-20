@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Testing.Verifiers;
 using Microsoft.CodeAnalysis.VisualBasic.Testing;
 
-namespace GP.NamingAnalyzers.Test;
+namespace GP.NamingAnalyzers.Test.Verifiers;
 
 public static partial class VisualBasicCodeFixVerifier<TAnalyzer, TCodeFix>
     where TAnalyzer : DiagnosticAnalyzer, new()
@@ -31,7 +31,7 @@ public static partial class VisualBasicCodeFixVerifier<TAnalyzer, TCodeFix>
     {
         VisualBasicCodeFixVerifier<TAnalyzer, TCodeFix>.Test test = new()
         {
-            TestCode = source,
+            TestCode = source
         };
 
         test.ExpectedDiagnostics.AddRange(expected);
@@ -52,7 +52,7 @@ public static partial class VisualBasicCodeFixVerifier<TAnalyzer, TCodeFix>
         VisualBasicCodeFixVerifier<TAnalyzer, TCodeFix>.Test test = new()
         {
             TestCode = source,
-            FixedCode = fixedSource,
+            FixedCode = fixedSource
         };
 
         test.ExpectedDiagnostics.AddRange(expected);

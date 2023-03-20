@@ -7,7 +7,7 @@ using Microsoft.CodeAnalysis.Testing;
 using Microsoft.CodeAnalysis.Testing.Verifiers;
 using Microsoft.CodeAnalysis.VisualBasic.Testing;
 
-namespace GP.NamingAnalyzers.Test;
+namespace GP.NamingAnalyzers.Test.Verifiers;
 
 public static partial class VisualBasicAnalyzerVerifier<TAnalyzer>
     where TAnalyzer : DiagnosticAnalyzer, new()
