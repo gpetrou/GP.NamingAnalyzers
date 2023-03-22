@@ -1,4 +1,5 @@
-# Copyright (c) gpetrou. All Rights Reserved.\r\nLicensed under the MIT License. See Licence.md in the project root for license information.
+# Copyright (c) gpetrou. All Rights Reserved.
+# Licensed under the MIT License. See Licence.md in the project root for license information.
 
 [CmdletBinding()]
 Param(
