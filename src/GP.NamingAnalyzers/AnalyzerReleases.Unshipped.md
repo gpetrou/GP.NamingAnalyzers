@@ -5,3 +5,4 @@
 Rule ID | Category | Severity | Notes
 --------|----------|----------|-------
 GPNA0003 | Naming | Warning | KeyValuePairMemberNameDiagnosticAnalyzer, [Documentation](https://github.com/gpetrou/GP.NamingAnalyzers/tree/main/docs/GPNA0003.md)
+GPNA0004 | Naming | Warning | BooleanMemberNameDiagnosticAnalyzer, [Documentation](https://github.com/gpetrou/GP.NamingAnalyzers/tree/main/docs/GPNA0004.md)
