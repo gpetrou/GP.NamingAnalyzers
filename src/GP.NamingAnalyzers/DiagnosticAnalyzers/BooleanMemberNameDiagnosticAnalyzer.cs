@@ -125,11 +125,6 @@ public sealed class BooleanMemberNameDiagnosticAnalyzer : DiagnosticAnalyzer
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.RegisterCompilationStartAction(compilationStartAnalysisContext =>
         {
-            if (compilationStartAnalysisContext is null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
             INamedTypeSymbol? booleanSymbol = compilationStartAnalysisContext.Compilation.GetTypeByMetadataName(typeof(bool).FullName);
 
             if (booleanSymbol is not null)

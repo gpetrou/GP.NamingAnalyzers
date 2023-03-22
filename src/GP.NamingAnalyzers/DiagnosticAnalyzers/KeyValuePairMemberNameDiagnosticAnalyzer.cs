@@ -126,11 +126,6 @@ public sealed class KeyValuePairMemberNameDiagnosticAnalyzer : DiagnosticAnalyze
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.RegisterCompilationStartAction(compilationStartAnalysisContext =>
         {
-            if (compilationStartAnalysisContext is null)
-            {
-                throw new ArgumentNullException(nameof(context));
-            }
-
             INamedTypeSymbol? keyValuePairSymbol = compilationStartAnalysisContext.Compilation.GetTypeByMetadataName(typeof(KeyValuePair<,>).FullName);
 
             if (keyValuePairSymbol is not null)
