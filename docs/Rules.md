@@ -1,4 +1,5 @@
 # Rules #
+
 The naming analyzers contain the following collection of rules:
 
 | Identifier | Name | Description
