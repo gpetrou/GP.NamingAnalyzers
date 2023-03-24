@@ -25,16 +25,23 @@ public static partial class CSharpAnalyzerVerifier<TAnalyzer>
     public static DiagnosticResult Diagnostic(DiagnosticDescriptor descriptor)
         => CSharpAnalyzerVerifier<TAnalyzer, XUnitVerifier>.Diagnostic(descriptor);
 
-    /// <inheritdoc cref="AnalyzerVerifier{TAnalyzer, TTest, TVerifier}.VerifyAnalyzerAsync(string, DiagnosticResult[])"/>
-    public static async Task VerifyAnalyzerAsync(string source, params DiagnosticResult[] expected)
+    public static async Task VerifyAnalyzerAsync(
+        string source,
+        HashSet<PackageIdentity>? uniqueAdditionalPackageIdentities = null,
+        Dictionary<string, string>? optionValuesByOptionName = null,
+        params DiagnosticResult[] expected)
     {
-        CSharpAnalyzerVerifier<TAnalyzer>.Test test = new()
+        ReferenceAssemblies referenceAssemblies = ReferenceAssemblies.Default;
+        if (uniqueAdditionalPackageIdentities is not null)
         {
-            ReferenceAssemblies = ReferenceAssemblies.Default.AddPackages(
-                ImmutableArray.Create(
-                    new PackageIdentity("xunit", "2.4.2"),
-                    new PackageIdentity("Nunit", "3.13.3"),
-                    new PackageIdentity("MSTest.TestFramework", "3.0.2"))),
+            referenceAssemblies = referenceAssemblies.AddPackages(ImmutableArray.CreateRange(uniqueAdditionalPackageIdentities));
+        }
+
+        optionValuesByOptionName ??= new Dictionary<string, string>();
+
+        CSharpAnalyzerVerifier<TAnalyzer>.Test test = new(optionValuesByOptionName)
+        {
+            ReferenceAssemblies = referenceAssemblies,
             TestCode = source
         };
 

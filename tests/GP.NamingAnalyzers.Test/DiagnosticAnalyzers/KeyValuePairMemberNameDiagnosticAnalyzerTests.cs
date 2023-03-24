@@ -94,7 +94,7 @@ namespace N
                 .WithArguments("_myKeyValuePair")
         };
 
-        await VerifyCS.VerifyAnalyzerAsync(sourceCode, expectedDiagnosticResults);
+        await VerifyCS.VerifyAnalyzerAsync(sourceCode, null, null, expectedDiagnosticResults);
     }
 
     [Fact]
@@ -121,7 +121,7 @@ namespace N
                 .WithArguments("AKeyValuePair")
         };
 
-        await VerifyCS.VerifyAnalyzerAsync(sourceCode, expectedDiagnosticResults);
+        await VerifyCS.VerifyAnalyzerAsync(sourceCode, null, null, expectedDiagnosticResults);
     }
 
     [Fact]
@@ -153,7 +153,7 @@ namespace N
                 .WithArguments("aKeyValuePair")
         };
 
-        await VerifyCS.VerifyAnalyzerAsync(sourceCode, expectedDiagnosticResults);
+        await VerifyCS.VerifyAnalyzerAsync(sourceCode, null, null, expectedDiagnosticResults);
     }
 
     [Fact]
@@ -187,6 +187,6 @@ namespace N
                 .WithArguments("aKeyValuePair")
         };
 
-        await VerifyCS.VerifyAnalyzerAsync(sourceCode, expectedDiagnosticResults);
+        await VerifyCS.VerifyAnalyzerAsync(sourceCode, null, null, expectedDiagnosticResults);
     }
 }

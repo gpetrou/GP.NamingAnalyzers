@@ -214,7 +214,7 @@ dotnet_diagnostic.SA1139.severity = warning
 dotnet_diagnostic.SA1200.severity = none
 
 # Elements should appear in the correct order
-dotnet_diagnostic.SA1201.severity = warning
+dotnet_diagnostic.SA1201.severity = none
 
 # Elements should be ordered by access
 dotnet_diagnostic.SA1202.severity = none
@@ -289,7 +289,7 @@ dotnet_diagnostic.SA1307.severity = warning
 dotnet_diagnostic.SA1308.severity = warning
 
 # Field names should not begin with underscore
-dotnet_diagnostic.SA1309.severity = warning
+dotnet_diagnostic.SA1309.severity = none
 
 # Field names should not contain underscore
 dotnet_diagnostic.SA1310.severity = warning
