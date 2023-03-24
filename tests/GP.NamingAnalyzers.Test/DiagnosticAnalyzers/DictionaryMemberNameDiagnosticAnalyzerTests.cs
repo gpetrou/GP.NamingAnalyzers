@@ -108,7 +108,7 @@ namespace N
                 .WithArguments("_myDictionary")
         };
 
-        await VerifyCS.VerifyAnalyzerAsync(sourceCode, expectedDiagnosticResults);
+        await VerifyCS.VerifyAnalyzerAsync(sourceCode, null, null, expectedDiagnosticResults);
     }
 
     [Theory]
@@ -148,7 +148,7 @@ namespace N
                 .WithArguments("ADictionary")
         };
 
-        await VerifyCS.VerifyAnalyzerAsync(sourceCode, expectedDiagnosticResults);
+        await VerifyCS.VerifyAnalyzerAsync(sourceCode, null, null, expectedDiagnosticResults);
     }
 
     [Theory]
@@ -193,7 +193,7 @@ namespace N
                 .WithArguments("aDictionary")
         };
 
-        await VerifyCS.VerifyAnalyzerAsync(sourceCode, expectedDiagnosticResults);
+        await VerifyCS.VerifyAnalyzerAsync(sourceCode, null, null, expectedDiagnosticResults);
     }
 
     [Theory]
@@ -240,6 +240,6 @@ namespace N
                 .WithArguments("aDictionary")
         };
 
-        await VerifyCS.VerifyAnalyzerAsync(sourceCode, expectedDiagnosticResults);
+        await VerifyCS.VerifyAnalyzerAsync(sourceCode, null, null, expectedDiagnosticResults);
     }
 }

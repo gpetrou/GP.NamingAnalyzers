@@ -19,7 +19,7 @@ public sealed class BooleanMemberNameDiagnosticAnalyzerTests
     [InlineData("_myBoolean")]
     public void IsBooleanNameValid_WhenNameIsInvalid_ShouldReturnFalse(string booleanName)
     {
-        bool isNameValid = BooleanMemberNameDiagnosticAnalyzer.IsBooleanNameValid(booleanName);
+        bool isNameValid = BooleanMemberNameDiagnosticAnalyzer.IsBooleanNameValid(booleanName, BooleanMemberNameDiagnosticAnalyzer.DefaultRegexPattern);
 
         isNameValid.Should().BeFalse();
     }
@@ -30,7 +30,7 @@ public sealed class BooleanMemberNameDiagnosticAnalyzerTests
     [InlineData("isEditing")]
     public void IsBooleanNameValid_WhenNameIsValid_ShouldReturnTrue(string booleanName)
     {
-        bool isNameValid = BooleanMemberNameDiagnosticAnalyzer.IsBooleanNameValid(booleanName);
+        bool isNameValid = BooleanMemberNameDiagnosticAnalyzer.IsBooleanNameValid(booleanName, BooleanMemberNameDiagnosticAnalyzer.DefaultRegexPattern);
 
         isNameValid.Should().BeTrue();
     }
@@ -69,8 +69,38 @@ namespace N
         await VerifyCS.VerifyAnalyzerAsync(sourceCode);
     }
 
-    [Fact]
-    public async Task Analyze_WhenBooleanFieldNameIsInvalid_ShouldReportDiagnostic()
+    public static IEnumerable<object[]> FieldMemberData =>
+        new List<object[]>
+        {
+            new object[]
+            {
+                new Dictionary<string, string>(),
+                "_isValid",
+                "_myBoolean",
+                "Boolean '_myBoolean' does not follow the 'can|has|is' naming convention",
+                "follow the 'can|has|is' naming convention",
+                32
+            },
+            new object[]
+            {
+                new Dictionary<string, string>() { { "dotnet_diagnostic.GPNA0004.pattern", "^.*Boolean$" } },
+                "_myBoolean",
+                "_isValid",
+                "Boolean '_isValid' does not match the '^.*Boolean$' regex pattern",
+                "match the '^.*Boolean$' regex pattern",
+                30
+            }
+        };
+
+    [Theory]
+    [MemberData(nameof(FieldMemberData))]
+    public async Task Analyze_WhenBooleanFieldNameIsInvalid_ShouldReportDiagnostic(
+        Dictionary<string, string> optionValuesByOptionName,
+        string validFieldName,
+        string invalidFieldName,
+        string expectedMessage,
+        string expectedSecondArgument,
+        int expectedEndColumn)
     {
         string sourceCode = $@"
 using System;
@@ -79,24 +109,58 @@ namespace N
 {{
     public class Example
     {{
-        private bool _myBoolean;
-        private bool _isValid;
+        private bool {validFieldName};
+        private bool {invalidFieldName};
     }}
 }}";
 
         DiagnosticResult[] expectedDiagnosticResults = new DiagnosticResult[]
         {
             new DiagnosticResult("GPNA0004", DiagnosticSeverity.Warning)
-                .WithMessage("Boolean '_myBoolean' does not follow the 'can|has|is' naming convention")
-                .WithSpan(8, 22, 8, 32)
-                .WithArguments("_myBoolean")
+                .WithMessage(expectedMessage)
+                .WithSpan(9, 22, 9, expectedEndColumn)
+                .WithArguments(invalidFieldName, expectedSecondArgument)
         };
 
-        await VerifyCS.VerifyAnalyzerAsync(sourceCode, expectedDiagnosticResults);
+        await VerifyCS.VerifyAnalyzerAsync(
+            sourceCode,
+            uniqueAdditionalPackageIdentities: null,
+            optionValuesByOptionName,
+            expectedDiagnosticResults);
     }
 
-    [Fact]
-    public async Task Analyze_WhenBooleanPropertyNameIsInvalid_ShouldReportDiagnostic()
+    public static IEnumerable<object[]> PropertiesMemberData =>
+        new List<object[]>
+        {
+            new object[]
+            {
+                new Dictionary<string, string>(),
+                "IsValid",
+                "MyBoolean",
+                "Boolean 'MyBoolean' does not follow the 'can|has|is' naming convention",
+                "follow the 'can|has|is' naming convention",
+                30
+            },
+            new object[]
+            {
+                new Dictionary<string, string>() { { "dotnet_diagnostic.GPNA0004.pattern", "^.*Boolean$" } },
+                "MyBoolean",
+                "IsValid",
+                "Boolean 'IsValid' does not match the '^.*Boolean$' regex pattern",
+                "match the '^.*Boolean$' regex pattern",
+                28
+            }
+        };
+
+    [Theory]
+    [MemberData(nameof(PropertiesMemberData))]
+    public async Task Analyze_WhenBooleanPropertyNameIsInvalid_ShouldReportDiagnostic(
+        Dictionary<string, string> optionValuesByOptionName,
+        string validPropertyName,
+        string invalidPropertyName,
+        string expectedMessage,
+        string expectedSecondArgument,
+        int expectedEndColumn)
     {
         string sourceCode = $@"
 using System;
@@ -106,24 +170,58 @@ namespace N
 {{
     public class Example
     {{
-        public bool MyBoolean {{ get; set; }}
-        public bool IsValid {{ get; set; }}
+        public bool {validPropertyName} {{ get; set; }}
+        public bool {invalidPropertyName} {{ get; set; }}
     }}
 }}";
 
         DiagnosticResult[] expectedDiagnosticResults = new DiagnosticResult[]
         {
             new DiagnosticResult("GPNA0004", DiagnosticSeverity.Warning)
-                .WithMessage("Boolean 'MyBoolean' does not follow the 'can|has|is' naming convention")
-                .WithSpan(9, 21, 9, 30)
-                .WithArguments("MyBoolean")
+                .WithMessage(expectedMessage)
+                .WithSpan(10, 21, 10, expectedEndColumn)
+                .WithArguments(invalidPropertyName, expectedSecondArgument)
         };
 
-        await VerifyCS.VerifyAnalyzerAsync(sourceCode, expectedDiagnosticResults);
+        await VerifyCS.VerifyAnalyzerAsync(
+             sourceCode,
+             uniqueAdditionalPackageIdentities: null,
+             optionValuesByOptionName,
+             expectedDiagnosticResults);
     }
 
-    [Fact]
-    public async Task Analyze_WhenBooleanParameterNameIsInvalid_ShouldReportDiagnostic()
+    public static IEnumerable<object[]> ParametersMemberData =>
+        new List<object[]>
+        {
+            new object[]
+            {
+                new Dictionary<string, string>(),
+                "isValid",
+                "myBoolean",
+                "Boolean 'myBoolean' does not follow the 'can|has|is' naming convention",
+                "follow the 'can|has|is' naming convention",
+                49
+            },
+            new object[]
+            {
+                new Dictionary<string, string>() { { "dotnet_diagnostic.GPNA0004.pattern", "^.*Boolean$" } },
+                "myBoolean",
+                "isValid",
+                "Boolean 'isValid' does not match the '^.*Boolean$' regex pattern",
+                "match the '^.*Boolean$' regex pattern",
+                47
+            }
+        };
+
+    [Theory]
+    [MemberData(nameof(ParametersMemberData))]
+    public async Task Analyze_WhenBooleanParameterNameIsInvalid_ShouldReportDiagnostic(
+        Dictionary<string, string> optionValuesByOptionName,
+        string validParameterName,
+        string invalidParameterName,
+        string expectedMessage,
+        string expectedSecondArgument,
+        int expectedEndColumn)
     {
         string sourceCode = $@"
 using System;
@@ -133,11 +231,11 @@ namespace N
 {{
     public class Example
     {{
-        public void Check(bool myBoolean)
+        public void Check(bool {validParameterName})
         {{
         }}
 
-        public void CheckOnceMore(bool isValid)
+        public void CheckOnceMore(bool {invalidParameterName})
         {{
         }}
     }}
@@ -146,16 +244,50 @@ namespace N
         DiagnosticResult[] expectedDiagnosticResults = new DiagnosticResult[]
         {
             new DiagnosticResult("GPNA0004", DiagnosticSeverity.Warning)
-                .WithMessage("Boolean 'myBoolean' does not follow the 'can|has|is' naming convention")
-                .WithSpan(9, 32, 9, 41)
-                .WithArguments("myBoolean")
+                .WithMessage(expectedMessage)
+                .WithSpan(13, 40, 13, expectedEndColumn)
+                .WithArguments(invalidParameterName, expectedSecondArgument)
         };
 
-        await VerifyCS.VerifyAnalyzerAsync(sourceCode, expectedDiagnosticResults);
+        await VerifyCS.VerifyAnalyzerAsync(
+            sourceCode,
+            uniqueAdditionalPackageIdentities: null,
+            optionValuesByOptionName,
+            expectedDiagnosticResults);
     }
 
-    [Fact]
-    public async Task Analyze_WhenBooleanVariableNameIsInvalid_ShouldReportDiagnostic()
+    public static IEnumerable<object[]> VariablesMemberData =>
+        new List<object[]>
+        {
+            new object[]
+            {
+                new Dictionary<string, string>(),
+                "isValid",
+                "myBoolean",
+                "Boolean 'myBoolean' does not follow the 'can|has|is' naming convention",
+                "follow the 'can|has|is' naming convention",
+                27
+            },
+            new object[]
+            {
+                new Dictionary<string, string>() { { "dotnet_diagnostic.GPNA0004.pattern", "^.*Boolean$" } },
+                "myBoolean",
+                "isValid",
+                "Boolean 'isValid' does not match the '^.*Boolean$' regex pattern",
+                "match the '^.*Boolean$' regex pattern",
+                25
+            }
+        };
+
+    [Theory]
+    [MemberData(nameof(VariablesMemberData))]
+    public async Task Analyze_WhenBooleanVariableNameIsInvalid_ShouldReportDiagnostic(
+        Dictionary<string, string> optionValuesByOptionName,
+        string validVariableName,
+        string invalidVariableName,
+        string expectedMessage,
+        string expectedSecondArgument,
+        int expectedEndColumn)
     {
         string sourceCode = $@"
 using System;
@@ -167,12 +299,12 @@ namespace N
     {{
         public void Check()
         {{
-            bool myBoolean;
+            bool {validVariableName};
         }}
 
         public void CheckOnceMore()
         {{
-            bool isValid;
+            bool {invalidVariableName};
         }}
     }}
 }}";
@@ -180,11 +312,15 @@ namespace N
         DiagnosticResult[] expectedDiagnosticResults = new DiagnosticResult[]
         {
             new DiagnosticResult("GPNA0004", DiagnosticSeverity.Warning)
-                .WithMessage("Boolean 'myBoolean' does not follow the 'can|has|is' naming convention")
-                .WithSpan(11, 18, 11, 27)
-                .WithArguments("myBoolean")
+                .WithMessage(expectedMessage)
+                .WithSpan(16, 18, 16, expectedEndColumn)
+                .WithArguments(invalidVariableName, expectedSecondArgument)
         };
 
-        await VerifyCS.VerifyAnalyzerAsync(sourceCode, expectedDiagnosticResults);
+        await VerifyCS.VerifyAnalyzerAsync(
+            sourceCode,
+            uniqueAdditionalPackageIdentities: null,
+            optionValuesByOptionName,
+            expectedDiagnosticResults);
     }
 }

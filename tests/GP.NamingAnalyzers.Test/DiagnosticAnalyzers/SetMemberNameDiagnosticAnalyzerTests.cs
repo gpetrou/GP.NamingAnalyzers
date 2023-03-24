@@ -102,7 +102,7 @@ namespace N
                 .WithArguments("_items")
         };
 
-        await VerifyCS.VerifyAnalyzerAsync(sourceCode, expectedDiagnosticResults);
+        await VerifyCS.VerifyAnalyzerAsync(sourceCode, null, null, expectedDiagnosticResults);
     }
 
     [Theory]
@@ -136,7 +136,7 @@ namespace N
                 .WithArguments("ASet")
         };
 
-        await VerifyCS.VerifyAnalyzerAsync(sourceCode, expectedDiagnosticResults);
+        await VerifyCS.VerifyAnalyzerAsync(sourceCode, null, null, expectedDiagnosticResults);
     }
 
     [Theory]
@@ -175,7 +175,7 @@ namespace N
                 .WithArguments("aSet")
         };
 
-        await VerifyCS.VerifyAnalyzerAsync(sourceCode, expectedDiagnosticResults);
+        await VerifyCS.VerifyAnalyzerAsync(sourceCode, null, null, expectedDiagnosticResults);
     }
 
     [Theory]
@@ -216,6 +216,6 @@ namespace N
                 .WithArguments("aSet")
         };
 
-        await VerifyCS.VerifyAnalyzerAsync(sourceCode, expectedDiagnosticResults);
+        await VerifyCS.VerifyAnalyzerAsync(sourceCode, null, null, expectedDiagnosticResults);
     }
 }

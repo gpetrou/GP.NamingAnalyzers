@@ -12,6 +12,13 @@ namespace GP.NamingAnalyzers.Test.DiagnosticAnalyzers;
 
 public sealed class TestMethodNameDiagnosticAnalyzerTests
 {
+    private static readonly HashSet<PackageIdentity> _uniqueAdditionalPackageIdentities = new()
+    {
+        new PackageIdentity("xunit", "2.4.2"),
+        new PackageIdentity("Nunit", "3.13.3"),
+        new PackageIdentity("MSTest.TestFramework", "3.0.2")
+    };
+
     [Theory]
     [InlineData(null)]
     [InlineData("")]
@@ -66,7 +73,9 @@ namespace NonTestMethodNameExample
     }
 }";
 
-        await VerifyCS.VerifyAnalyzerAsync(sourceCode);
+        await VerifyCS.VerifyAnalyzerAsync(
+            sourceCode,
+            _uniqueAdditionalPackageIdentities);
     }
 
     [Fact]
@@ -99,7 +108,11 @@ namespace WrongTestMethodNameExample
                 .WithArguments("PassingTest")
         };
 
-        await VerifyCS.VerifyAnalyzerAsync(sourceCode, expectedDiagnosticResults);
+        await VerifyCS.VerifyAnalyzerAsync(
+            sourceCode,
+            _uniqueAdditionalPackageIdentities,
+            null,
+            expectedDiagnosticResults);
     }
 
     [Fact]
@@ -132,7 +145,11 @@ namespace WrongTestMethodNameExample
                 .WithArguments("PassingTest")
         };
 
-        await VerifyCS.VerifyAnalyzerAsync(sourceCode, expectedDiagnosticResults);
+        await VerifyCS.VerifyAnalyzerAsync(
+            sourceCode,
+            _uniqueAdditionalPackageIdentities,
+            null,
+            expectedDiagnosticResults);
     }
 
     [Fact]
@@ -165,7 +182,11 @@ namespace WrongTestMethodNameExample
                 .WithArguments("PassingTest")
         };
 
-        await VerifyCS.VerifyAnalyzerAsync(sourceCode, expectedDiagnosticResults);
+        await VerifyCS.VerifyAnalyzerAsync(
+            sourceCode,
+            _uniqueAdditionalPackageIdentities,
+            null,
+            expectedDiagnosticResults);
     }
 
     [Fact]
@@ -200,7 +221,11 @@ namespace WrongTestMethodNameExample
                 .WithArguments("PassingTest")
         };
 
-        await VerifyCS.VerifyAnalyzerAsync(sourceCode, expectedDiagnosticResults);
+        await VerifyCS.VerifyAnalyzerAsync(
+            sourceCode,
+            _uniqueAdditionalPackageIdentities,
+            null,
+            expectedDiagnosticResults);
     }
 
     [Fact]
@@ -233,6 +258,10 @@ namespace WrongTestMethodNameExample
                 .WithArguments("PassingTest")
         };
 
-        await VerifyCS.VerifyAnalyzerAsync(sourceCode, expectedDiagnosticResults);
+        await VerifyCS.VerifyAnalyzerAsync(
+            sourceCode,
+            _uniqueAdditionalPackageIdentities,
+            null,
+            expectedDiagnosticResults);
     }
 }
