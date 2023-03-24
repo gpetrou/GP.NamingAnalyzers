@@ -1,0 +1,1 @@
+A [collection](https://github.com/gpetrou/GP.NamingAnalyzers/blob/main/src/GP.NamingAnalyzers/AnalyzerReleases.Shipped.md) of Roslyn analyzers for naming conventions.

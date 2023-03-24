@@ -10,22 +10,25 @@
   <PropertyGroup>
     <PackageId>GP.NamingAnalyzers</PackageId>
     <Authors>gpetrou</Authors>
+    <PackageReadmeFile>Readme.md</PackageReadmeFile>
     <PackageLicenseFile>License.md</PackageLicenseFile>
     <PackageIcon>Logo.png</PackageIcon>
     <PackageProjectUrl>https://github.com/gpetrou/GP.NamingAnalyzers</PackageProjectUrl>
     <RepositoryUrl>https://github.com/gpetrou/GP.NamingAnalyzers</RepositoryUrl>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <Description>A collection of Roslyn analyzers for naming conventions.</Description>
-    <PackageReleaseNotes>Summary of changes made in this release of the package.</PackageReleaseNotes>
-    <PackageTags>GP.NamingAnalyzers, analyzers</PackageTags>
+    <ReleaseNotesBaseUrl>https://github.com/gpetrou/GP.NamingAnalyzers/releases/</ReleaseNotesBaseUrl>
+    <PackageReleaseNotes>$(ReleaseNotesBaseUrl)$(GitTag)</PackageReleaseNotes>
+    <PackageTags>GP.NamingAnalyzers, Roslyn, CodeAnalysis, Analyzers, Naming</PackageTags>
     <DevelopmentDependency>true</DevelopmentDependency>
     <NoPackageAnalysis>true</NoPackageAnalysis>
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_AddAnalyzersToOutput</TargetsForTfmSpecificContentInPackage>
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="../../NuGetReadme.md" Pack="true" PackagePath="Readme.md" />
     <None Include="../../License.md" Pack="true" PackagePath="License.md" />
-    <None Include="../../images/logo.png" Pack="true" PackagePath="Logo.png" />
+    <None Include="../../images/Logo.png" Pack="true" PackagePath="Logo.png" />
   </ItemGroup>
 
   <ItemGroup>
