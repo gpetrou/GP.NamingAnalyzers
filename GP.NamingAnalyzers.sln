@@ -35,6 +35,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "eng", "eng", "{B0A16B6E-817
 		eng\CodeAnalysis.IDE.globalconfig = eng\CodeAnalysis.IDE.globalconfig
 		eng\CodeAnalysis.NetAnalyzers.src.globalconfig = eng\CodeAnalysis.NetAnalyzers.src.globalconfig
 		eng\CodeAnalysis.NetAnalyzers.tests.globalconfig = eng\CodeAnalysis.NetAnalyzers.tests.globalconfig
+		eng\CodeAnalysis.Roslyn.globalconfig = eng\CodeAnalysis.Roslyn.globalconfig
 		eng\CodeAnalysis.StyleCop.src.globalconfig = eng\CodeAnalysis.StyleCop.src.globalconfig
 		eng\CodeAnalysis.StyleCop.tests.globalconfig = eng\CodeAnalysis.StyleCop.tests.globalconfig
 	EndProjectSection
