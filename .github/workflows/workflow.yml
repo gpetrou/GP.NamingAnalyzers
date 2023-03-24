@@ -51,6 +51,7 @@ jobs:
         run: ./Make.ps1 test
       - name: Test results
         uses: dorny/test-reporter@v1.6.0
+        if: always()
         with:
           name: 'Test results'
           path: './artifacts/TestResults/*.xml'
