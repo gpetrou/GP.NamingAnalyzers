@@ -10,6 +10,10 @@ on:
     branches:
       - main
 
+permissions:
+  statuses: write
+  checks: write
+
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -45,6 +49,12 @@ jobs:
       - name: Test
         shell: pwsh
         run: ./Make.ps1 test
+      - name: Test results
+        uses: dorny/test-reporter@v1.6.0
+        with:
+          name: 'Test results'
+          path: './artifacts/TestResults/*.xml'
+          reporter: java-junit
       - name: Download and extract coverage history
         shell: pwsh
         run: |
