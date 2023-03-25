@@ -24,10 +24,8 @@ public sealed class TestMethodNameDiagnosticAnalyzer : DiagnosticAnalyzer
     private const string HelpLinkUri = $"https://github.com/gpetrou/GP.NamingAnalyzers/tree/main/docs/{DiagnosticId}.md";
 
     private const string PatternOptionName = $"dotnet_diagnostic.{DiagnosticId}.pattern";
-
-    private const string DefaultNamingConvention = "follow the 'MethodUnderTest_When_Should' naming convention";
-
-    private const string CustomRegexPatternEndMessage = "match the '{0}' regex pattern";
+    private const string DefaultDiagnosticMessageEnd = "follow the 'MethodUnderTest_When_Should' naming convention";
+    private const string CustomRegexPatternMessageEnd = "match the '{0}' regex pattern";
 
     /// <summary>
     /// The default regex pattern.
@@ -54,6 +52,7 @@ public sealed class TestMethodNameDiagnosticAnalyzer : DiagnosticAnalyzer
     };
 
     private string _regexPattern = DefaultRegexPattern;
+    private string _diagnosticMessageEnd = DefaultDiagnosticMessageEnd;
 
     /// <inheritdoc/>
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DiagnosticDescriptor);
@@ -81,14 +80,11 @@ public sealed class TestMethodNameDiagnosticAnalyzer : DiagnosticAnalyzer
                 {
                     if (!IsTestMethodNameValid(methodSymbol.Name, _regexPattern))
                     {
-                        string endMessage = _regexPattern == DefaultRegexPattern
-                            ? DefaultNamingConvention
-                            : string.Format(CultureInfo.InvariantCulture, CustomRegexPatternEndMessage, _regexPattern);
                         Diagnostic diagnostic = Diagnostic.Create(
                             DiagnosticDescriptor,
                             methodSymbol.Locations[0],
                             methodSymbol.Name,
-                            endMessage);
+                            _diagnosticMessageEnd);
                         context.ReportDiagnostic(diagnostic);
                     }
                 }
@@ -125,9 +121,16 @@ public sealed class TestMethodNameDiagnosticAnalyzer : DiagnosticAnalyzer
             }
 
             string? regexPattern = compilationStartAnalysisContext.ReadRegexPattern(PatternOptionName, DiagnosticId);
-            _regexPattern = regexPattern is not null
-                ? regexPattern
-                : DefaultRegexPattern;
+            if (regexPattern is not null && _regexPattern != regexPattern)
+            {
+                _regexPattern = regexPattern;
+                _diagnosticMessageEnd = string.Format(CultureInfo.InvariantCulture, CustomRegexPatternMessageEnd, _regexPattern);
+            }
+            else if (_regexPattern != DefaultRegexPattern)
+            {
+                _regexPattern = DefaultRegexPattern;
+                _diagnosticMessageEnd = DefaultDiagnosticMessageEnd;
+            }
 
             compilationStartAnalysisContext.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.Method);
         });

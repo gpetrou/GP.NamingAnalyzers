@@ -25,10 +25,8 @@ public sealed class KeyValuePairMemberNameDiagnosticAnalyzer : DiagnosticAnalyze
     private const string HelpLinkUri = $"https://github.com/gpetrou/GP.NamingAnalyzers/tree/main/docs/{DiagnosticId}.md";
 
     private const string PatternOptionName = $"dotnet_diagnostic.{DiagnosticId}.pattern";
-
-    private const string DefaultNamingConvention = "follow the 'xByY' naming convention";
-
-    private const string CustomRegexPatternEndMessage = "match the '{0}' regex pattern";
+    private const string DefaultDiagnosticMessageEnd = "follow the 'xByY' naming convention";
+    private const string CustomRegexPatternMessageEnd = "match the '{0}' regex pattern";
 
     /// <summary>
     /// The default regex pattern.
@@ -46,6 +44,7 @@ public sealed class KeyValuePairMemberNameDiagnosticAnalyzer : DiagnosticAnalyze
         HelpLinkUri);
 
     private string _regexPattern = DefaultRegexPattern;
+    private string _diagnosticMessageEnd = DefaultDiagnosticMessageEnd;
 
     /// <inheritdoc/>
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DiagnosticDescriptor);
@@ -72,14 +71,11 @@ public sealed class KeyValuePairMemberNameDiagnosticAnalyzer : DiagnosticAnalyze
         {
             if (fieldSymbol.Type.OriginalDefinition.Equals(keyValuePairSymbol, SymbolEqualityComparer.Default) && !IsKeyValuePairNameValid(fieldSymbol.Name, _regexPattern))
             {
-                string endMessage = _regexPattern == DefaultRegexPattern
-                    ? DefaultNamingConvention
-                    : string.Format(CultureInfo.InvariantCulture, CustomRegexPatternEndMessage, _regexPattern);
                 Diagnostic diagnostic = Diagnostic.Create(
                     DiagnosticDescriptor,
                     symbol.Locations[0],
                     fieldSymbol.Name,
-                    endMessage);
+                    _diagnosticMessageEnd);
                 context.ReportDiagnostic(diagnostic);
 
                 return;
@@ -90,14 +86,11 @@ public sealed class KeyValuePairMemberNameDiagnosticAnalyzer : DiagnosticAnalyze
         {
             if (propertySymbol.Type.OriginalDefinition.Equals(keyValuePairSymbol, SymbolEqualityComparer.Default) && !IsKeyValuePairNameValid(propertySymbol.Name, _regexPattern))
             {
-                string endMessage = _regexPattern == DefaultRegexPattern
-                    ? DefaultNamingConvention
-                    : string.Format(CultureInfo.InvariantCulture, CustomRegexPatternEndMessage, _regexPattern);
                 Diagnostic diagnostic = Diagnostic.Create(
                     DiagnosticDescriptor,
                     symbol.Locations[0],
                     propertySymbol.Name,
-                    endMessage);
+                    _diagnosticMessageEnd);
                 context.ReportDiagnostic(diagnostic);
 
                 return;
@@ -108,14 +101,11 @@ public sealed class KeyValuePairMemberNameDiagnosticAnalyzer : DiagnosticAnalyze
         {
             if (parameterSymbol.Type.OriginalDefinition.Equals(keyValuePairSymbol, SymbolEqualityComparer.Default) && !IsKeyValuePairNameValid(parameterSymbol.Name, _regexPattern))
             {
-                string endMessage = _regexPattern == DefaultRegexPattern
-                    ? DefaultNamingConvention
-                    : string.Format(CultureInfo.InvariantCulture, CustomRegexPatternEndMessage, _regexPattern);
                 Diagnostic diagnostic = Diagnostic.Create(
                     DiagnosticDescriptor,
                     symbol.Locations[0],
                     parameterSymbol.Name,
-                    endMessage);
+                    _diagnosticMessageEnd);
                 context.ReportDiagnostic(diagnostic);
 
                 return;
@@ -138,14 +128,11 @@ public sealed class KeyValuePairMemberNameDiagnosticAnalyzer : DiagnosticAnalyze
                 {
                     if (localSymbol.Type.OriginalDefinition.Equals(keyValuePairSymbol, SymbolEqualityComparer.Default) && !IsKeyValuePairNameValid(localSymbol.Name, _regexPattern))
                     {
-                        string endMessage = _regexPattern == DefaultRegexPattern
-                            ? DefaultNamingConvention
-                            : string.Format(CultureInfo.InvariantCulture, CustomRegexPatternEndMessage, _regexPattern);
                         Diagnostic diagnostic = Diagnostic.Create(
                             DiagnosticDescriptor,
                             localSymbol.Locations[0],
                             localSymbol.Name,
-                            endMessage);
+                            _diagnosticMessageEnd);
                         context.ReportDiagnostic(diagnostic);
 
                         break;
@@ -172,9 +159,16 @@ public sealed class KeyValuePairMemberNameDiagnosticAnalyzer : DiagnosticAnalyze
             if (keyValuePairSymbol is not null)
             {
                 string? regexPattern = compilationStartAnalysisContext.ReadRegexPattern(PatternOptionName, DiagnosticId);
-                _regexPattern = regexPattern is not null
-                    ? regexPattern
-                    : DefaultRegexPattern;
+                if (regexPattern is not null && _regexPattern != regexPattern)
+                {
+                    _regexPattern = regexPattern;
+                    _diagnosticMessageEnd = string.Format(CultureInfo.InvariantCulture, CustomRegexPatternMessageEnd, _regexPattern);
+                }
+                else if (_regexPattern != DefaultRegexPattern)
+                {
+                    _regexPattern = DefaultRegexPattern;
+                    _diagnosticMessageEnd = DefaultDiagnosticMessageEnd;
+                }
 
                 compilationStartAnalysisContext.RegisterSymbolAction(
                     symbolAnalysisContext => AnalyzeSymbol(symbolAnalysisContext, keyValuePairSymbol),

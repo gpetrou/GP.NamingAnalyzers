@@ -25,10 +25,8 @@ public sealed class BooleanMemberNameDiagnosticAnalyzer : DiagnosticAnalyzer
     private const string HelpLinkUri = $"https://github.com/gpetrou/GP.NamingAnalyzers/tree/main/docs/{DiagnosticId}.md";
 
     private const string PatternOptionName = $"dotnet_diagnostic.{DiagnosticId}.pattern";
-
-    private const string DefaultNamingConvention = "follow the 'can|has|is' naming convention";
-
-    private const string CustomRegexPatternEndMessage = "match the '{0}' regex pattern";
+    private const string DefaultDiagnosticMessageEnd = "follow the 'can|has|is' naming convention";
+    private const string CustomRegexPatternMessageEnd = "match the '{0}' regex pattern";
 
     /// <summary>
     /// The default regex pattern.
@@ -46,6 +44,7 @@ public sealed class BooleanMemberNameDiagnosticAnalyzer : DiagnosticAnalyzer
         HelpLinkUri);
 
     private string _regexPattern = DefaultRegexPattern;
+    private string _diagnosticMessageEnd = DefaultDiagnosticMessageEnd;
 
     /// <inheritdoc/>
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DiagnosticDescriptor);
@@ -73,14 +72,11 @@ public sealed class BooleanMemberNameDiagnosticAnalyzer : DiagnosticAnalyzer
         {
             if (fieldSymbol.Type.OriginalDefinition.Equals(booleanSymbol, SymbolEqualityComparer.Default) && !IsBooleanNameValid(fieldSymbol.Name, _regexPattern))
             {
-                string endMessage = _regexPattern == DefaultRegexPattern
-                    ? DefaultNamingConvention
-                    : string.Format(CultureInfo.InvariantCulture, CustomRegexPatternEndMessage, _regexPattern);
                 Diagnostic diagnostic = Diagnostic.Create(
                     DiagnosticDescriptor,
                     symbol.Locations[0],
                     fieldSymbol.Name,
-                    endMessage);
+                    _diagnosticMessageEnd);
                 context.ReportDiagnostic(diagnostic);
 
                 return;
@@ -91,14 +87,11 @@ public sealed class BooleanMemberNameDiagnosticAnalyzer : DiagnosticAnalyzer
         {
             if (propertySymbol.Type.OriginalDefinition.Equals(booleanSymbol, SymbolEqualityComparer.Default) && !IsBooleanNameValid(propertySymbol.Name, _regexPattern))
             {
-                string endMessage = _regexPattern == DefaultRegexPattern
-                    ? DefaultNamingConvention
-                    : string.Format(CultureInfo.InvariantCulture, CustomRegexPatternEndMessage, _regexPattern);
                 Diagnostic diagnostic = Diagnostic.Create(
                     DiagnosticDescriptor,
                     symbol.Locations[0],
                     propertySymbol.Name,
-                    endMessage);
+                    _diagnosticMessageEnd);
                 context.ReportDiagnostic(diagnostic);
 
                 return;
@@ -109,14 +102,11 @@ public sealed class BooleanMemberNameDiagnosticAnalyzer : DiagnosticAnalyzer
         {
             if (parameterSymbol.Type.OriginalDefinition.Equals(booleanSymbol, SymbolEqualityComparer.Default) && !IsBooleanNameValid(parameterSymbol.Name, _regexPattern))
             {
-                string endMessage = _regexPattern == DefaultRegexPattern
-                    ? DefaultNamingConvention
-                    : string.Format(CultureInfo.InvariantCulture, CustomRegexPatternEndMessage, _regexPattern);
                 Diagnostic diagnostic = Diagnostic.Create(
                     DiagnosticDescriptor,
                     symbol.Locations[0],
                     parameterSymbol.Name,
-                    endMessage);
+                    _diagnosticMessageEnd);
                 context.ReportDiagnostic(diagnostic);
 
                 return;
@@ -139,15 +129,11 @@ public sealed class BooleanMemberNameDiagnosticAnalyzer : DiagnosticAnalyzer
                 {
                     if (localSymbol.Type.OriginalDefinition.Equals(booleanSymbol, SymbolEqualityComparer.Default) && !IsBooleanNameValid(localSymbol.Name, _regexPattern))
                     {
-                        string endMessage = _regexPattern == DefaultRegexPattern
-                            ? DefaultNamingConvention
-                            : string.Format(CultureInfo.InvariantCulture, CustomRegexPatternEndMessage, _regexPattern);
-
                         Diagnostic diagnostic = Diagnostic.Create(
                             DiagnosticDescriptor,
                             localSymbol.Locations[0],
                             localSymbol.Name,
-                            endMessage);
+                            _diagnosticMessageEnd);
                         context.ReportDiagnostic(diagnostic);
 
                         break;
@@ -174,9 +160,16 @@ public sealed class BooleanMemberNameDiagnosticAnalyzer : DiagnosticAnalyzer
             if (booleanSymbol is not null)
             {
                 string? regexPattern = compilationStartAnalysisContext.ReadRegexPattern(PatternOptionName, DiagnosticId);
-                _regexPattern = regexPattern is not null
-                    ? regexPattern
-                    : DefaultRegexPattern;
+                if (regexPattern is not null && _regexPattern != regexPattern)
+                {
+                    _regexPattern = regexPattern;
+                    _diagnosticMessageEnd = string.Format(CultureInfo.InvariantCulture, CustomRegexPatternMessageEnd, _regexPattern);
+                }
+                else if (_regexPattern != DefaultRegexPattern)
+                {
+                    _regexPattern = DefaultRegexPattern;
+                    _diagnosticMessageEnd = DefaultDiagnosticMessageEnd;
+                }
 
                 compilationStartAnalysisContext.RegisterSymbolAction(
                     symbolAnalysisContext => AnalyzeSymbol(symbolAnalysisContext, booleanSymbol),
