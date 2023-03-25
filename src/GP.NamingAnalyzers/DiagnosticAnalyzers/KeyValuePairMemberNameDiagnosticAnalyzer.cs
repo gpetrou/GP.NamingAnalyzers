@@ -20,7 +20,7 @@ public sealed class KeyValuePairMemberNameDiagnosticAnalyzer : DiagnosticAnalyze
     private const string DiagnosticId = "GPNA0003";
     private const string Title = "Incorrect key/value pair name";
     private const string MessageFormat = "Key/value pair '{0}' does not {1}";
-    private const string Description = "A key/value pair name should follow the 'xByY' naming convention.";
+    private const string Description = "A key/value pair name should follow the naming convention.";
     private const string Category = "Naming";
     private const string HelpLinkUri = $"https://github.com/gpetrou/GP.NamingAnalyzers/tree/main/docs/{DiagnosticId}.md";
 
