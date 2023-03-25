@@ -21,7 +21,7 @@ public sealed class KeyValuePairMemberNameDiagnosticAnalyzerTests
     [InlineData("xByYKeyValuePair")]
     public void IsKeyValuePairNameValid_WhenNameIsInvalid_ShouldReturnFalse(string keyValuePairName)
     {
-        bool isNameValid = KeyValuePairMemberNameDiagnosticAnalyzer.IsKeyValuePairNameValid(keyValuePairName);
+        bool isNameValid = KeyValuePairMemberNameDiagnosticAnalyzer.IsKeyValuePairNameValid(keyValuePairName, KeyValuePairMemberNameDiagnosticAnalyzer.DefaultRegexPattern);
 
         isNameValid.Should().BeFalse();
     }
@@ -31,7 +31,7 @@ public sealed class KeyValuePairMemberNameDiagnosticAnalyzerTests
     [InlineData("itemById")]
     public void IsKeyValuePairNameValid_WhenNameIsValid_ShouldReturnTrue(string keyValuePairName)
     {
-        bool isNameValid = KeyValuePairMemberNameDiagnosticAnalyzer.IsKeyValuePairNameValid(keyValuePairName);
+        bool isNameValid = KeyValuePairMemberNameDiagnosticAnalyzer.IsKeyValuePairNameValid(keyValuePairName, KeyValuePairMemberNameDiagnosticAnalyzer.DefaultRegexPattern);
 
         isNameValid.Should().BeTrue();
     }
@@ -70,8 +70,38 @@ namespace N
         await VerifyCS.VerifyAnalyzerAsync(sourceCode);
     }
 
-    [Fact]
-    public async Task Analyze_WhenKeyValuePairFieldNameIsInvalid_ShouldReportDiagnostic()
+    public static IEnumerable<object[]> FieldMemberData =>
+        new List<object[]>
+        {
+            new object[]
+            {
+                new Dictionary<string, string>(),
+                "_itemById",
+                "_myKeyValuePair",
+                "Key/value pair '_myKeyValuePair' does not follow the 'xByY' naming convention",
+                "follow the 'xByY' naming convention",
+                58
+            },
+            new object[]
+            {
+                new Dictionary<string, string>() { { "dotnet_diagnostic.GPNA0003.pattern", "^.*KeyValuePair$" } },
+                "_myKeyValuePair",
+                "_itemById",
+                "Key/value pair '_itemById' does not match the '^.*KeyValuePair$' regex pattern",
+                "match the '^.*KeyValuePair$' regex pattern",
+                52
+            }
+        };
+
+    [Theory]
+    [MemberData(nameof(FieldMemberData))]
+    public async Task Analyze_WhenKeyValuePairFieldNameIsInvalid_ShouldReportDiagnostic(
+        Dictionary<string, string> optionValuesByOptionName,
+        string validFieldName,
+        string invalidFieldName,
+        string expectedMessage,
+        string expectedSecondArgument,
+        int expectedEndColumn)
     {
         string sourceCode = $@"
 using System;
@@ -81,24 +111,58 @@ namespace N
 {{
     public class Example
     {{
-        private KeyValuePair<int, string> _myKeyValuePair;
-        private KeyValuePair<int, string> _itemsById;
+        private KeyValuePair<int, string> {validFieldName};
+        private KeyValuePair<int, string> {invalidFieldName};
     }}
 }}";
 
         DiagnosticResult[] expectedDiagnosticResults = new DiagnosticResult[]
         {
             new DiagnosticResult("GPNA0003", DiagnosticSeverity.Warning)
-                .WithMessage("Key/value pair '_myKeyValuePair' does not follow the 'xByY' naming convention")
-                .WithSpan(9, 43, 9, 58)
-                .WithArguments("_myKeyValuePair")
+                .WithMessage(expectedMessage)
+                .WithSpan(10, 43, 10, expectedEndColumn)
+                .WithArguments(invalidFieldName, expectedSecondArgument)
         };
 
-        await VerifyCS.VerifyAnalyzerAsync(sourceCode, null, null, expectedDiagnosticResults);
+        await VerifyCS.VerifyAnalyzerAsync(
+            sourceCode,
+            uniqueAdditionalPackageIdentities: null,
+            optionValuesByOptionName,
+            expectedDiagnosticResults);
     }
 
-    [Fact]
-    public async Task Analyze_WhenKeyValuePairPropertyNameIsInvalid_ShouldReportDiagnostic()
+    public static IEnumerable<object[]> PropertiesMemberData =>
+        new List<object[]>
+        {
+            new object[]
+            {
+                new Dictionary<string, string>(),
+                "ItemById",
+                "MyKeyValuePair",
+                "Key/value pair 'MyKeyValuePair' does not follow the 'xByY' naming convention",
+                "follow the 'xByY' naming convention",
+                56
+            },
+            new object[]
+            {
+                new Dictionary<string, string>() { { "dotnet_diagnostic.GPNA0003.pattern", "^.*KeyValuePair$" } },
+                "MyKeyValuePair",
+                "ItemById",
+                "Key/value pair 'ItemById' does not match the '^.*KeyValuePair$' regex pattern",
+                "match the '^.*KeyValuePair$' regex pattern",
+                50
+            }
+        };
+
+    [Theory]
+    [MemberData(nameof(PropertiesMemberData))]
+    public async Task Analyze_WhenKeyValuePairPropertyNameIsInvalid_ShouldReportDiagnostic(
+        Dictionary<string, string> optionValuesByOptionName,
+        string validPropertyName,
+        string invalidPropertyName,
+        string expectedMessage,
+        string expectedSecondArgument,
+        int expectedEndColumn)
     {
         string sourceCode = $@"
 using System;
@@ -108,24 +172,58 @@ namespace N
 {{
     public class Example
     {{
-        public KeyValuePair<int, string> AKeyValuePair {{ get; set; }}
-        public KeyValuePair<int, string> ItemsById {{ get; set; }}
+        public KeyValuePair<int, string> {validPropertyName} {{ get; set; }}
+        public KeyValuePair<int, string> {invalidPropertyName} {{ get; set; }}
     }}
 }}";
 
         DiagnosticResult[] expectedDiagnosticResults = new DiagnosticResult[]
         {
             new DiagnosticResult("GPNA0003", DiagnosticSeverity.Warning)
-                .WithMessage("Key/value pair 'AKeyValuePair' does not follow the 'xByY' naming convention")
-                .WithSpan(9, 42, 9, 55)
-                .WithArguments("AKeyValuePair")
+                .WithMessage(expectedMessage)
+                .WithSpan(10, 42, 10, expectedEndColumn)
+                .WithArguments(invalidPropertyName, expectedSecondArgument)
         };
 
-        await VerifyCS.VerifyAnalyzerAsync(sourceCode, null, null, expectedDiagnosticResults);
+        await VerifyCS.VerifyAnalyzerAsync(
+            sourceCode,
+            uniqueAdditionalPackageIdentities: null,
+            optionValuesByOptionName,
+            expectedDiagnosticResults);
     }
 
-    [Fact]
-    public async Task Analyze_WhenKeyValuePairParameterNameIsInvalid_ShouldReportDiagnostic()
+    public static IEnumerable<object[]> ParametersMemberData =>
+        new List<object[]>
+        {
+            new object[]
+            {
+                new Dictionary<string, string>(),
+                "itemById",
+                "myKeyValuePair",
+                "Key/value pair 'myKeyValuePair' does not follow the 'xByY' naming convention",
+                "follow the 'xByY' naming convention",
+                75
+            },
+            new object[]
+            {
+                new Dictionary<string, string>() { { "dotnet_diagnostic.GPNA0003.pattern", "^.*KeyValuePair$" } },
+                "myKeyValuePair",
+                "itemById",
+                "Key/value pair 'itemById' does not match the '^.*KeyValuePair$' regex pattern",
+                "match the '^.*KeyValuePair$' regex pattern",
+                69
+            }
+        };
+
+    [Theory]
+    [MemberData(nameof(ParametersMemberData))]
+    public async Task Analyze_WhenKeyValuePairParameterNameIsInvalid_ShouldReportDiagnostic(
+        Dictionary<string, string> optionValuesByOptionName,
+        string validParameterName,
+        string invalidParameterName,
+        string expectedMessage,
+        string expectedSecondArgument,
+        int expectedEndColumn)
     {
         string sourceCode = $@"
 using System;
@@ -135,11 +233,11 @@ namespace N
 {{
     public class Example
     {{
-        public void Check(KeyValuePair<int, string> aKeyValuePair)
+        public void Check(KeyValuePair<int, string> {validParameterName})
         {{
         }}
 
-        public void CheckOnceMore(KeyValuePair<int, string> itemsById)
+        public void CheckOnceMore(KeyValuePair<int, string> {invalidParameterName})
         {{
         }}
     }}
@@ -148,16 +246,50 @@ namespace N
         DiagnosticResult[] expectedDiagnosticResults = new DiagnosticResult[]
         {
             new DiagnosticResult("GPNA0003", DiagnosticSeverity.Warning)
-                .WithMessage("Key/value pair 'aKeyValuePair' does not follow the 'xByY' naming convention")
-                .WithSpan(9, 53, 9, 66)
-                .WithArguments("aKeyValuePair")
+                .WithMessage(expectedMessage)
+                .WithSpan(13, 61, 13, expectedEndColumn)
+                .WithArguments(invalidParameterName, expectedSecondArgument)
         };
 
-        await VerifyCS.VerifyAnalyzerAsync(sourceCode, null, null, expectedDiagnosticResults);
+        await VerifyCS.VerifyAnalyzerAsync(
+            sourceCode,
+            uniqueAdditionalPackageIdentities: null,
+            optionValuesByOptionName,
+            expectedDiagnosticResults);
     }
 
-    [Fact]
-    public async Task Analyze_WhenKeyValuePairVariableNameIsInvalid_ShouldReportDiagnostic()
+    public static IEnumerable<object[]> VariablesMemberData =>
+        new List<object[]>
+        {
+            new object[]
+            {
+                new Dictionary<string, string>(),
+                "itemById",
+                "myKeyValuePair",
+                "Key/value pair 'myKeyValuePair' does not follow the 'xByY' naming convention",
+                "follow the 'xByY' naming convention",
+                53
+            },
+            new object[]
+            {
+                new Dictionary<string, string>() { { "dotnet_diagnostic.GPNA0003.pattern", "^.*KeyValuePair$" } },
+                "myKeyValuePair",
+                "itemById",
+                "Key/value pair 'itemById' does not match the '^.*KeyValuePair$' regex pattern",
+                "match the '^.*KeyValuePair$' regex pattern",
+                47
+            }
+        };
+
+    [Theory]
+    [MemberData(nameof(VariablesMemberData))]
+    public async Task Analyze_WhenKeyValuePairVariableNameIsInvalid_ShouldReportDiagnostic(
+        Dictionary<string, string> optionValuesByOptionName,
+        string validVariableName,
+        string invalidVariableName,
+        string expectedMessage,
+        string expectedSecondArgument,
+        int expectedEndColumn)
     {
         string sourceCode = $@"
 using System;
@@ -169,12 +301,12 @@ namespace N
     {{
         public void Check()
         {{
-            KeyValuePair<int, string> aKeyValuePair;
+            KeyValuePair<int, string> {validVariableName};
         }}
 
         public void CheckOnceMore()
         {{
-            KeyValuePair<int, string> itemsById;
+            KeyValuePair<int, string> {invalidVariableName};
         }}
     }}
 }}";
@@ -182,11 +314,15 @@ namespace N
         DiagnosticResult[] expectedDiagnosticResults = new DiagnosticResult[]
         {
             new DiagnosticResult("GPNA0003", DiagnosticSeverity.Warning)
-                .WithMessage("Key/value pair 'aKeyValuePair' does not follow the 'xByY' naming convention")
-                .WithSpan(11, 39, 11, 52)
-                .WithArguments("aKeyValuePair")
+                .WithMessage(expectedMessage)
+                .WithSpan(16, 39, 16, expectedEndColumn)
+                .WithArguments(invalidVariableName, expectedSecondArgument)
         };
 
-        await VerifyCS.VerifyAnalyzerAsync(sourceCode, null, null, expectedDiagnosticResults);
+        await VerifyCS.VerifyAnalyzerAsync(
+            sourceCode,
+            uniqueAdditionalPackageIdentities: null,
+            optionValuesByOptionName,
+            expectedDiagnosticResults);
     }
 }
