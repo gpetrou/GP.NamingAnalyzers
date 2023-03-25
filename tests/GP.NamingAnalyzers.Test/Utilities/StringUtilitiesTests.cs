@@ -26,6 +26,7 @@ public sealed class StringUtilitiesTests
     [InlineData(BooleanMemberNameDiagnosticAnalyzer.DefaultRegexPattern)]
     [InlineData(DictionaryMemberNameDiagnosticAnalyzer.DefaultRegexPattern)]
     [InlineData(KeyValuePairMemberNameDiagnosticAnalyzer.DefaultRegexPattern)]
+    [InlineData(MockedMemberNameDiagnosticAnalyzer.DefaultRegexPattern)]
     [InlineData(TestMethodNameDiagnosticAnalyzer.DefaultRegexPattern)]
     public void IsValidRegexPattern_WhenRegexPatternIsValid_ShouldReturnTrue(string regexPattern)
     {

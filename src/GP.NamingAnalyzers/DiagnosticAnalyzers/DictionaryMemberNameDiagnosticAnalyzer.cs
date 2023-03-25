@@ -63,7 +63,7 @@ public sealed class DictionaryMemberNameDiagnosticAnalyzer : DiagnosticAnalyzer
     /// <summary>
     /// Analyzes a symbol.
     /// </summary>
-    /// <param name="context">The symbol analysis context.</param>
+    /// <param name="context">An instance of <see cref="SymbolAnalysisContext"/>.</param>
     /// <param name="dictionarySymbols">The dictionary symbols.</param>
     private void AnalyzeSymbol(SymbolAnalysisContext context, List<INamedTypeSymbol> dictionarySymbols)
     {
@@ -120,7 +120,7 @@ public sealed class DictionaryMemberNameDiagnosticAnalyzer : DiagnosticAnalyzer
     /// <summary>
     /// Analyzes an operation.
     /// </summary>
-    /// <param name="context">The operation analysis context.</param>
+    /// <param name="context">An instance of <see cref="OperationAnalysisContext"/>.</param>
     /// <param name="dictionarySymbols">The dictionary symbols.</param>
     private void AnalyzeOperation(OperationAnalysisContext context, List<INamedTypeSymbol> dictionarySymbols)
     {

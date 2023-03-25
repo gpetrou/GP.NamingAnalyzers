@@ -51,7 +51,7 @@ public sealed class SetMemberNameDiagnosticAnalyzer : DiagnosticAnalyzer
     /// <summary>
     /// Analyzes a symbol.
     /// </summary>
-    /// <param name="context">The symbol analysis context.</param>
+    /// <param name="context">An instance of <see cref="SymbolAnalysisContext"/>.</param>
     /// <param name="setInterfaceSymbol">The set interface symbol.</param>
     private static void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol setInterfaceSymbol)
     {
@@ -93,7 +93,7 @@ public sealed class SetMemberNameDiagnosticAnalyzer : DiagnosticAnalyzer
     /// <summary>
     /// Analyzes an operation.
     /// </summary>
-    /// <param name="context">The operation analysis context.</param>
+    /// <param name="context">An instance of <see cref="OperationAnalysisContext"/>.</param>
     /// <param name="setInterfaceSymbol">The set interface symbol.</param>
     private static void AnalyzeOperation(OperationAnalysisContext context, INamedTypeSymbol setInterfaceSymbol)
     {

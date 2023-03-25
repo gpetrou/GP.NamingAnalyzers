@@ -62,7 +62,7 @@ public sealed class KeyValuePairMemberNameDiagnosticAnalyzer : DiagnosticAnalyze
     /// <summary>
     /// Analyzes a symbol.
     /// </summary>
-    /// <param name="context">The symbol analysis context.</param>
+    /// <param name="context">An instance of <see cref="SymbolAnalysisContext"/>.</param>
     /// <param name="keyValuePairSymbol">The key/value pair symbol.</param>
     private void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol keyValuePairSymbol)
     {
@@ -116,7 +116,7 @@ public sealed class KeyValuePairMemberNameDiagnosticAnalyzer : DiagnosticAnalyze
     /// <summary>
     /// Analyzes an operation.
     /// </summary>
-    /// <param name="context">The operation analysis context.</param>
+    /// <param name="context">An instance of <see cref="OperationAnalysisContext"/>.</param>
     /// <param name="keyValuePairSymbol">The key/value pair symbol.</param>
     private void AnalyzeOperation(OperationAnalysisContext context, INamedTypeSymbol keyValuePairSymbol)
     {
