@@ -7,3 +7,9 @@ artifacts/
 
 # ReSharper
 *.DotSettings.user
+
+# Local settings
+launchSettings.json
+
+# Generated .editorconfig
+src/GP.NamingAnalyzers.Package/editorconfig/

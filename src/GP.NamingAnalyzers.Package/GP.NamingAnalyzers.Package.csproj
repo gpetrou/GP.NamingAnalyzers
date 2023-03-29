@@ -33,6 +33,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GP.NamingAnalyzers.CodeFixes\GP.NamingAnalyzers.CodeFixes.csproj" />
+    <ProjectReference Include="..\GP.NamingAnalyzers.EditorConfigGenerator\GP.NamingAnalyzers.EditorConfigGenerator.csproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+    </ProjectReference>
     <ProjectReference Include="..\GP.NamingAnalyzers\GP.NamingAnalyzers.csproj" />
   </ItemGroup>
 
@@ -45,6 +49,10 @@
       <TfmSpecificPackageFile Include="$(OutputPath)\GP.NamingAnalyzers.dll" PackagePath="analyzers/dotnet/cs" />
       <TfmSpecificPackageFile Include="$(OutputPath)\GP.NamingAnalyzers.CodeFixes.dll" PackagePath="analyzers/dotnet/cs" />
     </ItemGroup>
+  </Target>
+
+  <Target Name="GenerateEditorConfig" AfterTargets="AfterBuild">
+    <Exec Command="dotnet &quot;$(OutputPath)../GP.NamingAnalyzers.EditorConfigGenerator/GP.NamingAnalyzers.EditorConfigGenerator.dll&quot; &quot;$(OutputPath)../GP.NamingAnalyzers/GP.NamingAnalyzers.dll&quot; &quot;$(MSBuildThisFileDirectory)editorconfig/Default/.editorconfig&quot;" />
   </Target>
 
 </Project>
