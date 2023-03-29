@@ -72,6 +72,7 @@
   <ItemGroup Condition=" '$(IsTestProject)' == 'true' ">
     <EditorConfigFiles Include="$(MSBuildThisFileDirectory)eng\CodeAnalysis.NetAnalyzers.tests.globalconfig" />
     <EditorConfigFiles Include="$(MSBuildThisFileDirectory)eng\CodeAnalysis.StyleCop.tests.globalconfig" />
+    <EditorConfigFiles Include="$(MSBuildThisFileDirectory)eng\CodeAnalysis.XUnit.globalconfig" />
     <PackageReference Include="coverlet.collector" Version="3.2.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

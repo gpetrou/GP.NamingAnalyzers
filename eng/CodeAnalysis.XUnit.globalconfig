@@ -1,0 +1,154 @@
+is_global = true
+
+# Test classes must be public
+dotnet_diagnostic.xUnit1000.severity = warning
+
+# Fact methods cannot have parameters
+dotnet_diagnostic.xUnit1001.severity = warning
+
+# Test methods cannot have multiple Fact or Theory attributes
+dotnet_diagnostic.xUnit1002.severity = warning
+
+# Theory methods must have test data
+dotnet_diagnostic.xUnit1003.severity = warning
+
+# Test methods should not be skipped
+dotnet_diagnostic.xUnit1004.severity = warning
+
+# Fact methods should not have test data
+dotnet_diagnostic.xUnit1005.severity = warning
+
+# Theory methods should have parameters
+dotnet_diagnostic.xUnit1006.severity = warning
+
+# ClassData must point at a valid class
+dotnet_diagnostic.xUnit1007.severity = warning
+
+# Test data attribute should only be used on a Theory
+dotnet_diagnostic.xUnit1008.severity = warning
+
+# InlineData values must match the number of method parameters
+dotnet_diagnostic.xUnit1009.severity = warning
+
+# The value is not convertible to the method parameter type
+dotnet_diagnostic.xUnit1010.severity = warning
+
+# There is no matching method parameter
+dotnet_diagnostic.xUnit1011.severity = warning
+
+# Null should not be used for value type parameters
+dotnet_diagnostic.xUnit1012.severity = warning
+
+# Public method should be marked as test
+dotnet_diagnostic.xUnit1013.severity = warning
+
+# MemberData should use nameof operator for member name
+dotnet_diagnostic.xUnit1014.severity = warning
+
+# MemberData must reference an existing member
+dotnet_diagnostic.xUnit1015.severity = warning
+
+# MemberData must reference a public member
+dotnet_diagnostic.xUnit1016.severity = warning
+
+# MemberData must reference a static member
+dotnet_diagnostic.xUnit1017.severity = warning
+
+# MemberData must reference a valid member kind
+dotnet_diagnostic.xUnit1018.severity = warning
+
+# MemberData must reference a member providing a valid data type
+dotnet_diagnostic.xUnit1019.severity = warning
+
+# MemberData must reference a property with a getter
+dotnet_diagnostic.xUnit1020.severity = warning
+
+# MemberData should not have parameters if the referenced member is not a method
+dotnet_diagnostic.xUnit1021.severity = warning
+
+# Theory methods cannot have a parameter array
+dotnet_diagnostic.xUnit1022.severity = warning
+
+# Theory methods cannot have default parameter values
+dotnet_diagnostic.xUnit1023.severity = warning
+
+# Test methods cannot have overloads
+dotnet_diagnostic.xUnit1024.severity = warning
+
+# InlineData should be unique within the Theory it belongs to
+dotnet_diagnostic.xUnit1025.severity = warning
+
+# Theory methods should use all of their parameters
+dotnet_diagnostic.xUnit1026.severity = warning
+
+# Collection definition classes must be public
+dotnet_diagnostic.xUnit1027.severity = warning
+
+# Test classes decorated with 'dotnet_diagnostic.xUnit.IClassFixture' or 'dotnet_diagnostic.xUnit.ICollectionFixture' should add a constructor argument of type TFixture
+dotnet_diagnostic.xUnit1033.severity = warning
+
+# Constants and literals should be the expected argument
+dotnet_diagnostic.xUnit2000.severity = warning
+
+# Do not use invalid equality check
+dotnet_diagnostic.xUnit2001.severity = warning
+
+# Do not use null check on value type
+dotnet_diagnostic.xUnit2002.severity = warning
+
+# Do not use equality check to test for null value
+dotnet_diagnostic.xUnit2003.severity = warning
+
+# Do not use equality check to test for boolean conditions
+dotnet_diagnostic.xUnit2004.severity = warning
+
+# Do not use identity check on value type
+dotnet_diagnostic.xUnit2005.severity = warning
+
+# Do not use invalid string equality check
+dotnet_diagnostic.xUnit2006.severity = warning
+
+# Do not use typeof expression to check the type
+dotnet_diagnostic.xUnit2007.severity = warning
+
+# Do not use boolean check to match on regular expressions
+dotnet_diagnostic.xUnit2008.severity = warning
+
+# Do not use boolean check to check for substrings
+dotnet_diagnostic.xUnit2009.severity = warning
+
+# Do not use boolean check to check for string equality
+dotnet_diagnostic.xUnit2010.severity = warning
+
+# Do not use empty collection check
+dotnet_diagnostic.xUnit2011.severity = warning
+
+# Do not use Enumerable.Any() to check if a value exists in a collection
+dotnet_diagnostic.xUnit2012.severity = warning
+
+# Do not use equality check to check for collection size.
+dotnet_diagnostic.xUnit2013.severity = warning
+
+# Do not use throws check to check for asynchronously thrown exception
+dotnet_diagnostic.xUnit2014.severity = warning
+
+# Do not use typeof expression to check the exception type
+dotnet_diagnostic.xUnit2015.severity = warning
+
+# Keep precision in the allowed range when asserting equality of doubles or decimals
+dotnet_diagnostic.xUnit2016.severity = warning
+
+# Do not use Contains() to check if a value exists in a collection
+dotnet_diagnostic.xUnit2017.severity = warning
+
+# Do not compare an object's exact type to an abstract class or interface
+dotnet_diagnostic.xUnit2018.severity = warning
+
+# Do not use obsolete throws check to check for asynchronously thrown exception
+dotnet_diagnostic.xUnit2019.severity = warning
+
+# Test case classes must derive directly or indirectly from dotnet_diagnostic.xUnit.LongLivedMarshalByRefObject
+dotnet_diagnostic.xUnit3000.severity = warning
+
+# Classes that implement dotnet_diagnostic.xUnit.Abstractions.Idotnet_diagnostic.xUnitSerializable must have a public parameterless constructor
+dotnet_diagnostic.xUnit3001.severity = warning
