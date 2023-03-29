@@ -25,8 +25,8 @@ public static class TypeSymbolExtensions
         }
 
         bool isNamedTypeSymbol = typeSymbol.OriginalDefinition.Equals(namedTypeSymbol, SymbolEqualityComparer.Default);
-        bool implementsInterface = typeSymbol.AllInterfaces.Any(interfaceNamedTypeSymbol => interfaceNamedTypeSymbol.ConstructedFrom.Equals(namedTypeSymbol, SymbolEqualityComparer.Default));
+        bool isImplementingInterface = typeSymbol.AllInterfaces.Any(interfaceNamedTypeSymbol => interfaceNamedTypeSymbol.ConstructedFrom.Equals(namedTypeSymbol, SymbolEqualityComparer.Default));
 
-        return isNamedTypeSymbol || implementsInterface;
+        return isNamedTypeSymbol || isImplementingInterface;
     }
 }
