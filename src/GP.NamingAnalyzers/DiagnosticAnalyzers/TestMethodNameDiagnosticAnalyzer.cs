@@ -67,6 +67,10 @@ public sealed class TestMethodNameDiagnosticAnalyzer : DiagnosticAnalyzer
         !string.IsNullOrWhiteSpace(name) &&
         Regex.IsMatch(name, regexPattern, RegexOptions.Compiled);
 
+    /// <summary>
+    /// Analyzes a symbol.
+    /// </summary>
+    /// <param name="context">An instance of <see cref="SymbolAnalysisContext"/>.</param>
     private void AnalyzeSymbol(SymbolAnalysisContext context)
     {
         ISymbol symbol = context.Symbol;
@@ -104,18 +108,17 @@ public sealed class TestMethodNameDiagnosticAnalyzer : DiagnosticAnalyzer
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.RegisterCompilationStartAction(compilationStartAnalysisContext =>
         {
-            bool foundAtLeastOneAttribute = false;
+            INamedTypeSymbol? namedTypeSymbol = null;
             foreach (string testAttributeName in UniqueTestAttributeNames)
             {
-                INamedTypeSymbol? namedTypeSymbol = compilationStartAnalysisContext.Compilation.GetTypeByMetadataName(testAttributeName);
+                namedTypeSymbol = compilationStartAnalysisContext.Compilation.GetTypeByMetadataName(testAttributeName);
                 if (namedTypeSymbol is not null)
                 {
-                    foundAtLeastOneAttribute = true;
                     break;
                 }
             }
 
-            if (!foundAtLeastOneAttribute)
+            if (namedTypeSymbol is null)
             {
                 return;
             }

@@ -62,7 +62,7 @@ public sealed class BooleanMemberNameDiagnosticAnalyzer : DiagnosticAnalyzer
     /// <summary>
     /// Analyzes a symbol.
     /// </summary>
-    /// <param name="context">The symbol analysis context.</param>
+    /// <param name="context">An instance of <see cref="SymbolAnalysisContext"/>.</param>
     /// <param name="booleanSymbol">The boolean symbol.</param>
     private void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol booleanSymbol)
     {
@@ -117,7 +117,7 @@ public sealed class BooleanMemberNameDiagnosticAnalyzer : DiagnosticAnalyzer
     /// <summary>
     /// Analyzes an operation.
     /// </summary>
-    /// <param name="context">The operation analysis context.</param>
+    /// <param name="context">An instance of <see cref="OperationAnalysisContext"/>.</param>
     /// <param name="booleanSymbol">The boolean symbol.</param>
     private void AnalyzeOperation(OperationAnalysisContext context, INamedTypeSymbol booleanSymbol)
     {
