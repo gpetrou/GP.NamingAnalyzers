@@ -60,7 +60,7 @@ dotnet_diagnostic.xUnit1018.severity = warning
 # MemberData must reference a member providing a valid data type
 dotnet_diagnostic.xUnit1019.severity = warning
 
-# MemberData must reference a property with a getter
+# MemberData must reference a property with a public getter
 dotnet_diagnostic.xUnit1020.severity = warning
 
 # MemberData should not have parameters if the referenced member is not a method
@@ -84,7 +84,7 @@ dotnet_diagnostic.xUnit1026.severity = warning
 # Collection definition classes must be public
 dotnet_diagnostic.xUnit1027.severity = warning
 
-# Test classes decorated with 'dotnet_diagnostic.xUnit.IClassFixture' or 'dotnet_diagnostic.xUnit.ICollectionFixture' should add a constructor argument of type TFixture
+# Test classes decorated with 'Xunit.IClassFixture<TFixture>' or 'Xunit.ICollectionFixture<TFixture>' should add a constructor argument of type TFixture
 dotnet_diagnostic.xUnit1033.severity = warning
 
 # Constants and literals should be the expected argument
@@ -123,7 +123,7 @@ dotnet_diagnostic.xUnit2010.severity = warning
 # Do not use empty collection check
 dotnet_diagnostic.xUnit2011.severity = warning
 
-# Do not use Enumerable.Any() to check if a value exists in a collection
+# Do not use boolean check to check if a value exists in a collection
 dotnet_diagnostic.xUnit2012.severity = warning
 
 # Do not use equality check to check for collection size.
@@ -135,7 +135,7 @@ dotnet_diagnostic.xUnit2014.severity = warning
 # Do not use typeof expression to check the exception type
 dotnet_diagnostic.xUnit2015.severity = warning
 
-# Keep precision in the allowed range when asserting equality of doubles or decimals
+# Keep precision in the allowed range when asserting equality of doubles or decimals.
 dotnet_diagnostic.xUnit2016.severity = warning
 
 # Do not use Contains() to check if a value exists in a collection
@@ -144,11 +144,8 @@ dotnet_diagnostic.xUnit2017.severity = warning
 # Do not compare an object's exact type to an abstract class or interface
 dotnet_diagnostic.xUnit2018.severity = warning
 
-# Do not use obsolete throws check to check for asynchronously thrown exception
-dotnet_diagnostic.xUnit2019.severity = warning
-
-# Test case classes must derive directly or indirectly from dotnet_diagnostic.xUnit.LongLivedMarshalByRefObject
+# Test case classes must derive directly or indirectly from Xunit.LongLivedMarshalByRefObject
 dotnet_diagnostic.xUnit3000.severity = warning
 
-# Classes that implement dotnet_diagnostic.xUnit.Abstractions.Idotnet_diagnostic.xUnitSerializable must have a public parameterless constructor
+# Classes that implement Xunit.Abstractions.IXunitSerializable must have a public parameterless constructor
 dotnet_diagnostic.xUnit3001.severity = warning

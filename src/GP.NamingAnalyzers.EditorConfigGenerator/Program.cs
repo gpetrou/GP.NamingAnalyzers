@@ -63,7 +63,10 @@ public static class Program
         SortedList<string, DiagnosticDescriptor> diagnosticDescriptorsById = new();
         foreach (DiagnosticAnalyzer analyzer in analyzers)
         {
-            diagnosticDescriptorsById.Add(analyzer.SupportedDiagnostics[0].Id, analyzer.SupportedDiagnostics[0]);
+            foreach (DiagnosticDescriptor supportedDiagnostic in analyzer.SupportedDiagnostics)
+            {
+                diagnosticDescriptorsById.TryAdd(supportedDiagnostic.Id, supportedDiagnostic);
+            }
         }
 
         StringBuilder editorConfigStringBuilder = new();
@@ -71,12 +74,18 @@ public static class Program
         {
             editorConfigStringBuilder
                 .Append("# ")
-                .AppendLine(diagnosticDescriptor.Description.ToString(CultureInfo.InvariantCulture))
+                .AppendLine(diagnosticDescriptor.Title.ToString(CultureInfo.InvariantCulture))
                 .Append("dotnet_diagnostic.")
                 .Append(diagnosticDescriptor.Id)
                 .Append(".severity = ")
                 .AppendLine(GetDiagnosticSeverityAsString(diagnosticDescriptor.DefaultSeverity))
                 .AppendLine();
+        }
+
+        int newLineLength = Environment.NewLine.Length;
+        if (editorConfigStringBuilder.Length > newLineLength)
+        {
+            editorConfigStringBuilder.Length -= newLineLength;
         }
 
         if (!Directory.Exists(outputDirectoryPath))
