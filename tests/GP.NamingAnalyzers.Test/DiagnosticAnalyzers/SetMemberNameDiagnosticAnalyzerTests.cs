@@ -22,7 +22,7 @@ public sealed class SetMemberNameDiagnosticAnalyzerTests
     [InlineData("uniqueXsSet")]
     public void IsSetNameValid_WhenNameIsInvalid_ShouldReturnFalse(string setName)
     {
-        bool isNameValid = SetMemberNameDiagnosticAnalyzer.IsSetNameValid(setName);
+        bool isNameValid = SetMemberNameDiagnosticAnalyzer.IsSetNameValid(setName, SetMemberNameDiagnosticAnalyzer.DefaultRegexPattern);
 
         isNameValid.Should().BeFalse();
     }
@@ -32,7 +32,7 @@ public sealed class SetMemberNameDiagnosticAnalyzerTests
     [InlineData("uniqueItems")]
     public void IsSetNameValid_WhenNameIsValid_ShouldReturnTrue(string setName)
     {
-        bool isNameValid = SetMemberNameDiagnosticAnalyzer.IsSetNameValid(setName);
+        bool isNameValid = SetMemberNameDiagnosticAnalyzer.IsSetNameValid(setName, SetMemberNameDiagnosticAnalyzer.DefaultRegexPattern);
 
         isNameValid.Should().BeTrue();
     }
@@ -71,12 +71,86 @@ namespace N
         await VerifyCS.VerifyAnalyzerAsync(sourceCode);
     }
 
+    public static IEnumerable<object[]> FieldMemberData =>
+        new List<object[]>
+        {
+            new object[]
+            {
+                new Dictionary<string, string>(),
+                "ISet<string>",
+                "_uniqueItems",
+                "_mySet",
+                "Set '_mySet' does not follow the 'uniqueXs' naming convention",
+                "follow the 'uniqueXs' naming convention",
+                30,
+                36
+            },
+            new object[]
+            {
+                new Dictionary<string, string>() { { "dotnet_diagnostic.GPNA0002.pattern", "^.*Set" } },
+                "ISet<string>",
+                "_mySet",
+                "_uniqueItems",
+                "Set '_uniqueItems' does not match the '^.*Set' regex pattern",
+                "match the '^.*Set' regex pattern",
+                30,
+                42
+            },
+            new object[]
+            {
+                new Dictionary<string, string>(),
+                "HashSet<string>",
+                "_uniqueItems",
+                "_mySet",
+                "Set '_mySet' does not follow the 'uniqueXs' naming convention",
+                "follow the 'uniqueXs' naming convention",
+                33,
+                39
+            },
+            new object[]
+            {
+                new Dictionary<string, string>() { { "dotnet_diagnostic.GPNA0002.pattern", "^.*Set" } },
+                "HashSet<string>",
+                "_mySet",
+                "_uniqueItems",
+                "Set '_uniqueItems' does not match the '^.*Set' regex pattern",
+                "match the '^.*Set' regex pattern",
+                33,
+                45
+            },
+            new object[]
+            {
+                new Dictionary<string, string>(),
+                "ImmutableHashSet<string>",
+                "_uniqueItems",
+                "_mySet",
+                "Set '_mySet' does not follow the 'uniqueXs' naming convention",
+                "follow the 'uniqueXs' naming convention",
+                42,
+                48
+            },
+            new object[]
+            {
+                new Dictionary<string, string>() { { "dotnet_diagnostic.GPNA0002.pattern", "^.*Set" } },
+                "ImmutableHashSet<string>",
+                "_mySet",
+                "_uniqueItems",
+                "Set '_uniqueItems' does not match the '^.*Set' regex pattern",
+                "match the '^.*Set' regex pattern",
+                42,
+                54
+            }
+        };
+
     [Theory]
-    [InlineData("ISet<string>", 30, 36)]
-    [InlineData("HashSet<string>", 33, 39)]
-    [InlineData("ImmutableHashSet<string>", 42, 48)]
+    [MemberData(nameof(FieldMemberData))]
     public async Task Analyze_WhenSetFieldNameIsInvalid_ShouldReportDiagnostic(
+        Dictionary<string, string> optionValuesByOptionName,
         string fieldType,
+        string validFieldName,
+        string invalidFieldName,
+        string expectedMessage,
+        string expectedSecondArgument,
         int expectedStartColumn,
         int expectedEndColumn)
     {
@@ -89,28 +163,106 @@ namespace N
 {{
     public class Example
     {{
-        private {fieldType} _items;
-        private {fieldType} _uniqueItems;
+        private {fieldType} {validFieldName};
+        private {fieldType} {invalidFieldName};
     }}
 }}";
 
         DiagnosticResult[] expectedDiagnosticResults = new DiagnosticResult[]
         {
             new DiagnosticResult("GPNA0002", DiagnosticSeverity.Warning)
-                .WithMessage("Set '_items' does not follow the 'uniqueXs' naming convention")
-                .WithSpan(10, expectedStartColumn, 10, expectedEndColumn)
-                .WithArguments("_items")
+                .WithMessage(expectedMessage)
+                .WithSpan(11, expectedStartColumn, 11, expectedEndColumn)
+                .WithArguments(invalidFieldName, expectedSecondArgument)
         };
 
-        await VerifyCS.VerifyAnalyzerAsync(sourceCode, null, null, expectedDiagnosticResults);
+        await VerifyCS.VerifyAnalyzerAsync(
+            sourceCode,
+            uniqueAdditionalPackageIdentities: null,
+            optionValuesByOptionName,
+            expectedDiagnosticResults);
     }
 
+    public static IEnumerable<object[]> PropertyMemberData =>
+        new List<object[]>
+        {
+            new object[]
+            {
+                new Dictionary<string, string>(),
+                "ISet<string>",
+                "UniqueItems",
+                "MySet",
+                "Set 'MySet' does not follow the 'uniqueXs' naming convention",
+                "follow the 'uniqueXs' naming convention",
+                29,
+                34
+            },
+            new object[]
+            {
+                new Dictionary<string, string>() { { "dotnet_diagnostic.GPNA0002.pattern", "^.*Set" } },
+                "ISet<string>",
+                "MySet",
+                "UniqueItems",
+                "Set 'UniqueItems' does not match the '^.*Set' regex pattern",
+                "match the '^.*Set' regex pattern",
+                29,
+                40
+            },
+            new object[]
+            {
+                new Dictionary<string, string>(),
+                "HashSet<string>",
+                "UniqueItems",
+                "MySet",
+                "Set 'MySet' does not follow the 'uniqueXs' naming convention",
+                "follow the 'uniqueXs' naming convention",
+                32,
+                37
+            },
+            new object[]
+            {
+                new Dictionary<string, string>() { { "dotnet_diagnostic.GPNA0002.pattern", "^.*Set" } },
+                "HashSet<string>",
+                "MySet",
+                "UniqueItems",
+                "Set 'UniqueItems' does not match the '^.*Set' regex pattern",
+                "match the '^.*Set' regex pattern",
+                32,
+                43
+            },
+            new object[]
+            {
+                new Dictionary<string, string>(),
+                "ImmutableHashSet<string>",
+                "UniqueItems",
+                "MySet",
+                "Set 'MySet' does not follow the 'uniqueXs' naming convention",
+                "follow the 'uniqueXs' naming convention",
+                41,
+                46
+            },
+            new object[]
+            {
+                new Dictionary<string, string>() { { "dotnet_diagnostic.GPNA0002.pattern", "^.*Set" } },
+                "ImmutableHashSet<string>",
+                "MySet",
+                "UniqueItems",
+                "Set 'UniqueItems' does not match the '^.*Set' regex pattern",
+                "match the '^.*Set' regex pattern",
+                41,
+                52
+            }
+        };
+
     [Theory]
-    [InlineData("ISet<string>", 29, 33)]
-    [InlineData("HashSet<string>", 32, 36)]
-    [InlineData("ImmutableHashSet<string>", 41, 45)]
+    [MemberData(nameof(PropertyMemberData))]
     public async Task Analyze_WhenSetPropertyNameIsInvalid_ShouldReportDiagnostic(
+        Dictionary<string, string> optionValuesByOptionName,
         string propertyType,
+        string validPropertyName,
+        string invalidPropertyName,
+        string expectedMessage,
+        string expectedSecondArgument,
         int expectedStartColumn,
         int expectedEndColumn)
     {
@@ -123,28 +275,106 @@ namespace N
 {{
     public class Example
     {{
-        public {propertyType} ASet {{ get; set; }}
-        public {propertyType} UniqueItems {{ get; set; }}
+        public {propertyType} {validPropertyName} {{ get; set; }}
+        public {propertyType} {invalidPropertyName} {{ get; set; }}
     }}
 }}";
 
         DiagnosticResult[] expectedDiagnosticResults = new DiagnosticResult[]
         {
             new DiagnosticResult("GPNA0002", DiagnosticSeverity.Warning)
-                .WithMessage("Set 'ASet' does not follow the 'uniqueXs' naming convention")
-                .WithSpan(10, expectedStartColumn, 10, expectedEndColumn)
-                .WithArguments("ASet")
+                .WithMessage(expectedMessage)
+                .WithSpan(11, expectedStartColumn, 11, expectedEndColumn)
+                .WithArguments(invalidPropertyName, expectedSecondArgument)
         };
 
-        await VerifyCS.VerifyAnalyzerAsync(sourceCode, null, null, expectedDiagnosticResults);
+        await VerifyCS.VerifyAnalyzerAsync(
+            sourceCode,
+            uniqueAdditionalPackageIdentities: null,
+            optionValuesByOptionName,
+            expectedDiagnosticResults);
     }
 
+    public static IEnumerable<object[]> ParameterMemberData =>
+        new List<object[]>
+        {
+            new object[]
+            {
+                new Dictionary<string, string>(),
+                "ISet<string>",
+                "uniqueItems",
+                "mySet",
+                "Set 'mySet' does not follow the 'uniqueXs' naming convention",
+                "follow the 'uniqueXs' naming convention",
+                48,
+                53
+            },
+            new object[]
+            {
+                new Dictionary<string, string>() { { "dotnet_diagnostic.GPNA0002.pattern", "^.*Set" } },
+                "ISet<string>",
+                "mySet",
+                "uniqueItems",
+                "Set 'uniqueItems' does not match the '^.*Set' regex pattern",
+                "match the '^.*Set' regex pattern",
+                48,
+                59
+            },
+            new object[]
+            {
+                new Dictionary<string, string>(),
+                "HashSet<string>",
+                "uniqueItems",
+                "mySet",
+                "Set 'mySet' does not follow the 'uniqueXs' naming convention",
+                "follow the 'uniqueXs' naming convention",
+                51,
+                56
+            },
+            new object[]
+            {
+                new Dictionary<string, string>() { { "dotnet_diagnostic.GPNA0002.pattern", "^.*Set" } },
+                "HashSet<string>",
+                "mySet",
+                "uniqueItems",
+                "Set 'uniqueItems' does not match the '^.*Set' regex pattern",
+                "match the '^.*Set' regex pattern",
+                51,
+                62
+            },
+            new object[]
+            {
+                new Dictionary<string, string>(),
+                "ImmutableHashSet<string>",
+                "uniqueItems",
+                "mySet",
+                "Set 'mySet' does not follow the 'uniqueXs' naming convention",
+                "follow the 'uniqueXs' naming convention",
+                60,
+                65
+            },
+            new object[]
+            {
+                new Dictionary<string, string>() { { "dotnet_diagnostic.GPNA0002.pattern", "^.*Set" } },
+                "ImmutableHashSet<string>",
+                "mySet",
+                "uniqueItems",
+                "Set 'uniqueItems' does not match the '^.*Set' regex pattern",
+                "match the '^.*Set' regex pattern",
+                60,
+                71
+            }
+        };
+
     [Theory]
-    [InlineData("ISet<string>", 40, 44)]
-    [InlineData("HashSet<string>", 43, 47)]
-    [InlineData("ImmutableHashSet<string>", 52, 56)]
+    [MemberData(nameof(ParameterMemberData))]
     public async Task Analyze_WhenSetParameterNameIsInvalid_ShouldReportDiagnostic(
+        Dictionary<string, string> optionValuesByOptionName,
         string parameterType,
+        string validParameterName,
+        string invalidParameterName,
+        string expectedMessage,
+        string expectedSecondArgument,
         int expectedStartColumn,
         int expectedEndColumn)
     {
@@ -157,11 +387,11 @@ namespace N
 {{
     public class Example
     {{
-        public void Check({parameterType} aSet)
+        public void Check({parameterType} {validParameterName})
         {{
         }}
 
-        public void CheckOnceMore({parameterType} uniqueItems)
+        public void CheckOnceMore({parameterType} {invalidParameterName})
         {{
         }}
     }}
@@ -170,20 +400,98 @@ namespace N
         DiagnosticResult[] expectedDiagnosticResults = new DiagnosticResult[]
         {
             new DiagnosticResult("GPNA0002", DiagnosticSeverity.Warning)
-                .WithMessage("Set 'aSet' does not follow the 'uniqueXs' naming convention")
-                .WithSpan(10, expectedStartColumn, 10, expectedEndColumn)
-                .WithArguments("aSet")
+                .WithMessage(expectedMessage)
+                .WithSpan(14, expectedStartColumn, 14, expectedEndColumn)
+                .WithArguments(invalidParameterName, expectedSecondArgument)
         };
 
-        await VerifyCS.VerifyAnalyzerAsync(sourceCode, null, null, expectedDiagnosticResults);
+        await VerifyCS.VerifyAnalyzerAsync(
+            sourceCode,
+            uniqueAdditionalPackageIdentities: null,
+            optionValuesByOptionName,
+            expectedDiagnosticResults);
     }
 
+    public static IEnumerable<object[]> VariableMemberData =>
+        new List<object[]>
+        {
+            new object[]
+            {
+                new Dictionary<string, string>(),
+                "ISet<string>",
+                "uniqueItems",
+                "mySet",
+                "Set 'mySet' does not follow the 'uniqueXs' naming convention",
+                "follow the 'uniqueXs' naming convention",
+                26,
+                31
+            },
+            new object[]
+            {
+                new Dictionary<string, string>() { { "dotnet_diagnostic.GPNA0002.pattern", "^.*Set" } },
+                "ISet<string>",
+                "mySet",
+                "uniqueItems",
+                "Set 'uniqueItems' does not match the '^.*Set' regex pattern",
+                "match the '^.*Set' regex pattern",
+                26,
+                37
+            },
+            new object[]
+            {
+                new Dictionary<string, string>(),
+                "HashSet<string>",
+                "uniqueItems",
+                "mySet",
+                "Set 'mySet' does not follow the 'uniqueXs' naming convention",
+                "follow the 'uniqueXs' naming convention",
+                29,
+                34
+            },
+            new object[]
+            {
+                new Dictionary<string, string>() { { "dotnet_diagnostic.GPNA0002.pattern", "^.*Set" } },
+                "HashSet<string>",
+                "mySet",
+                "uniqueItems",
+                "Set 'uniqueItems' does not match the '^.*Set' regex pattern",
+                "match the '^.*Set' regex pattern",
+                29,
+                40
+            },
+            new object[]
+            {
+                new Dictionary<string, string>(),
+                "ImmutableHashSet<string>",
+                "uniqueItems",
+                "mySet",
+                "Set 'mySet' does not follow the 'uniqueXs' naming convention",
+                "follow the 'uniqueXs' naming convention",
+                38,
+                43
+            },
+            new object[]
+            {
+                new Dictionary<string, string>() { { "dotnet_diagnostic.GPNA0002.pattern", "^.*Set" } },
+                "ImmutableHashSet<string>",
+                "mySet",
+                "uniqueItems",
+                "Set 'uniqueItems' does not match the '^.*Set' regex pattern",
+                "match the '^.*Set' regex pattern",
+                38,
+                49
+            }
+        };
+
     [Theory]
-    [InlineData("ISet<string>", 26, 30)]
-    [InlineData("HashSet<string>", 29, 33)]
-    [InlineData("ImmutableHashSet<string>", 38, 42)]
+    [MemberData(nameof(VariableMemberData))]
     public async Task Analyze_WhenSetVariableNameIsInvalid_ShouldReportDiagnostic(
+        Dictionary<string, string> optionValuesByOptionName,
         string variableType,
+        string validVariableName,
+        string invalidVariableName,
+        string expectedMessage,
+        string expectedSecondArgument,
         int expectedStartColumn,
         int expectedEndColumn)
     {
@@ -198,12 +506,12 @@ namespace N
     {{
         public void Check()
         {{
-            {variableType} aSet = null;
+            {variableType} {validVariableName} = null;
         }}
 
         public void CheckOnceMore()
         {{
-            {variableType} uniqueItems = null;
+            {variableType} {invalidVariableName} = null;
         }}
     }}
 }}";
@@ -211,11 +519,15 @@ namespace N
         DiagnosticResult[] expectedDiagnosticResults = new DiagnosticResult[]
         {
             new DiagnosticResult("GPNA0002", DiagnosticSeverity.Warning)
-                .WithMessage("Set 'aSet' does not follow the 'uniqueXs' naming convention")
-                .WithSpan(12, expectedStartColumn, 12, expectedEndColumn)
-                .WithArguments("aSet")
+                .WithMessage(expectedMessage)
+                .WithSpan(17, expectedStartColumn, 17, expectedEndColumn)
+                .WithArguments(invalidVariableName, expectedSecondArgument)
         };
 
-        await VerifyCS.VerifyAnalyzerAsync(sourceCode, null, null, expectedDiagnosticResults);
+        await VerifyCS.VerifyAnalyzerAsync(
+            sourceCode,
+            uniqueAdditionalPackageIdentities: null,
+            optionValuesByOptionName,
+            expectedDiagnosticResults);
     }
 }
