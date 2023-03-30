@@ -47,11 +47,12 @@ jobs:
           name: Binlog
           path: './artifacts/Build/Release/GP.NamingAnalyzers.binlog'
       - name: Test
+        id: test
         shell: pwsh
         run: ./Make.ps1 test
       - name: Test results
         uses: dorny/test-reporter@v1.6.0
-        if: always()
+        if: success() || steps.test.conclusion == 'failure'
         with:
           name: 'Test results'
           path: './artifacts/TestResults/*.xml'
