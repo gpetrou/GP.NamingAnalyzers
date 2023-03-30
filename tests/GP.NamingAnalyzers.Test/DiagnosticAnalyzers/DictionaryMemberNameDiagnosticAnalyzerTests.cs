@@ -46,6 +46,35 @@ public sealed class DictionaryMemberNameDiagnosticAnalyzerTests
     }
 
     [Fact]
+    public async Task Analyze_WhenCustomRegexPatternOptionIsInvalid_ShouldReportADiagnostic()
+    {
+        string sourceCode = @"
+using System;
+using System.Collections.Generic;
+
+namespace N
+{
+    public class Example
+    {
+        private Dictionary<int, string> _myDictionary;
+    }
+}";
+        Dictionary<string, string> optionValuesByOptionName = new() { { "dotnet_diagnostic.GPNA0001.pattern", "[" } };
+
+        DiagnosticResult[] expectedDiagnosticResults = new DiagnosticResult[]
+        {
+            new DiagnosticResult("GPNA0001", DiagnosticSeverity.Error)
+                .WithMessage("'[' is an invalid regex pattern")
+        };
+
+        await VerifyCS.VerifyAnalyzerAsync(
+            sourceCode,
+            uniqueAdditionalPackageIdentities: null,
+            optionValuesByOptionName,
+            expectedDiagnosticResults);
+    }
+
+    [Fact]
     public async Task Analyze_WhenMembersAreNotDictionaries_ShouldNotReportADiagnostic()
     {
         string sourceCode = @"

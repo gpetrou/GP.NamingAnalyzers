@@ -159,7 +159,12 @@ public sealed class BooleanMemberNameDiagnosticAnalyzer : DiagnosticAnalyzer
 
             if (booleanSymbol is not null)
             {
-                string? regexPattern = compilationStartAnalysisContext.ReadRegexPattern(PatternOptionName, DiagnosticId);
+                bool isRead = compilationStartAnalysisContext.TryReadRegexPattern(PatternOptionName, DiagnosticId, out string? regexPattern);
+                if (isRead && regexPattern is null)
+                {
+                    return;
+                }
+
                 if (regexPattern is not null && _regexPattern != regexPattern)
                 {
                     _regexPattern = regexPattern;

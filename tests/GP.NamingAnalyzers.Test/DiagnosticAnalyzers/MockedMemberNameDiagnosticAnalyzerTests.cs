@@ -52,6 +52,43 @@ public sealed class MockedMemberNameDiagnosticAnalyzerTests
     }
 
     [Fact]
+    public async Task Analyze_WhenCustomRegexPatternOptionIsInvalid_ShouldReportADiagnostic()
+    {
+        string sourceCode = @"
+using System;
+using Moq;
+
+namespace NonTestMethodNameExample
+{
+    interface IItem
+    {
+    }
+
+    public class UnitTests
+    {
+        public void TestMethod()
+        {
+            var item = new Mock<IItem>();
+        }
+    }
+}";
+
+        Dictionary<string, string> optionValuesByOptionName = new() { { "dotnet_diagnostic.GPNA0005.pattern", "[" } };
+
+        DiagnosticResult[] expectedDiagnosticResults = new DiagnosticResult[]
+        {
+            new DiagnosticResult("GPNA0005", DiagnosticSeverity.Error)
+                .WithMessage("'[' is an invalid regex pattern")
+        };
+
+        await VerifyCS.VerifyAnalyzerAsync(
+            sourceCode,
+            _uniqueAdditionalPackageIdentities,
+            optionValuesByOptionName,
+            expectedDiagnosticResults);
+    }
+
+    [Fact]
     public async Task Analyze_WhenThereIsNoTestAttribute_ShouldNotReturnADiagnostic()
     {
         const string sourceCode = @"

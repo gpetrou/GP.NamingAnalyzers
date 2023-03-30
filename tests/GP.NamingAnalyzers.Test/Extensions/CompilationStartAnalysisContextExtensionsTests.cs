@@ -17,12 +17,13 @@ namespace GP.NamingAnalyzers.Test.Extensions;
 public sealed class CompilationStartAnalysisContextExtensionsTests
 {
     [Fact]
-    public void ReadRegexPattern_WhenContentIsNull_ShouldThrowArgumentNullException()
+    public void TryReadRegexPattern_WhenContentIsNull_ShouldThrowArgumentNullException()
     {
-        Action action = () => CompilationStartAnalysisContextExtensions.ReadRegexPattern(
+        Action action = () => CompilationStartAnalysisContextExtensions.TryReadRegexPattern(
             null!,
             string.Empty,
-            string.Empty);
+            string.Empty,
+            out string? regexPattern);
 
         action.Should().Throw<ArgumentNullException>()
             .WithMessage("Value cannot be null. (Parameter 'context')");
@@ -47,8 +48,8 @@ public sealed class CompilationStartAnalysisContextExtensionsTests
     [InlineData("")]
     [InlineData(" ")]
     [InlineData("InvalidOptionName")]
-    [InlineData("optionName")]
-    public void ReadRegexPattern_WhenRegexPatternDoesNotExistOrIsInvalid_ShouldReturnNull(string patternOptionName)
+
+    public void TryReadRegexPattern_WhenRegexPatternDoesNotExist_ShouldReturnFalse(string patternOptionName)
     {
         Dictionary<string, string> optionValuesByOptionName = new()
         {
@@ -57,16 +58,38 @@ public sealed class CompilationStartAnalysisContextExtensionsTests
 
         Mock<CompilationStartAnalysisContext> mockedCompilationStartAnalysisContext = CreateMockedCompilationStartAnalysisContext(optionValuesByOptionName);
 
-        string? result = CompilationStartAnalysisContextExtensions.ReadRegexPattern(
+        bool isRead = CompilationStartAnalysisContextExtensions.TryReadRegexPattern(
             mockedCompilationStartAnalysisContext.Object,
             patternOptionName,
-            "DiagnosticId");
+            "DiagnosticId",
+            out string? regexPattern);
 
-        result.Should().BeNull();
+        isRead.Should().BeFalse();
+        regexPattern.Should().BeNull();
     }
 
     [Fact]
-    public void ReadRegexPattern_WhenRegexPatternExists_ShouldReturnRegexPatternValue()
+    public void TryReadRegexPattern_WhenRegexPatternIsInvalid_ShouldReturnTrue()
+    {
+        Dictionary<string, string> optionValuesByOptionName = new()
+        {
+            { "optionName", "[" }
+        };
+
+        Mock<CompilationStartAnalysisContext> mockedCompilationStartAnalysisContext = CreateMockedCompilationStartAnalysisContext(optionValuesByOptionName);
+
+        bool isRead = CompilationStartAnalysisContextExtensions.TryReadRegexPattern(
+            mockedCompilationStartAnalysisContext.Object,
+            "optionName",
+            "DiagnosticId",
+            out string? regexPattern);
+
+        isRead.Should().BeTrue();
+        regexPattern.Should().BeNull();
+    }
+
+    [Fact]
+    public void TryReadRegexPattern_WhenRegexPatternExists_ShouldReturnTrue()
     {
         Dictionary<string, string> optionValuesByOptionName = new()
         {
@@ -75,11 +98,13 @@ public sealed class CompilationStartAnalysisContextExtensionsTests
 
         Mock<CompilationStartAnalysisContext> mockedCompilationStartAnalysisContext = CreateMockedCompilationStartAnalysisContext(optionValuesByOptionName);
 
-        string? result = CompilationStartAnalysisContextExtensions.ReadRegexPattern(
+        bool isRead = CompilationStartAnalysisContextExtensions.TryReadRegexPattern(
             mockedCompilationStartAnalysisContext.Object,
             "optionName",
-            string.Empty);
+            "DiagnosticId",
+            out string? regexPattern);
 
-        result.Should().Be("optionValue");
+        isRead.Should().BeTrue();
+        regexPattern.Should().Be("optionValue");
     }
 }

@@ -44,6 +44,35 @@ public sealed class BooleanMemberNameDiagnosticAnalyzerTests
     }
 
     [Fact]
+    public async Task Analyze_WhenCustomRegexPatternOptionIsInvalid_ShouldReportADiagnostic()
+    {
+        string sourceCode = @"
+using System;
+using System.Collections.Generic;
+
+namespace N
+{
+    public class Example
+    {
+        private bool _myBoolean;
+    }
+}";
+        Dictionary<string, string> optionValuesByOptionName = new() { { "dotnet_diagnostic.GPNA0004.pattern", "[" } };
+
+        DiagnosticResult[] expectedDiagnosticResults = new DiagnosticResult[]
+        {
+            new DiagnosticResult("GPNA0004", DiagnosticSeverity.Error)
+                .WithMessage("'[' is an invalid regex pattern")
+        };
+
+        await VerifyCS.VerifyAnalyzerAsync(
+            sourceCode,
+            uniqueAdditionalPackageIdentities: null,
+            optionValuesByOptionName,
+            expectedDiagnosticResults);
+    }
+
+    [Fact]
     public async Task Analyze_WhenMembersAreNotBoolean_ShouldNotReportADiagnostic()
     {
         string sourceCode = @"

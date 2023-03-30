@@ -18,11 +18,13 @@ public static class CompilationStartAnalysisContextExtensions
     /// <param name="context">A <see cref="CompilationStartAnalysisContext"/> instance.</param>
     /// <param name="patternOptionName">The pattern option name.</param>
     /// <param name="diagnosticId">The diagnostic ID.</param>
-    /// <returns>The value of the option if it set and valid; otherwise, <see langword="null" />.</returns>
-    public static string? ReadRegexPattern(
+    /// <param name="regexPattern">The value of the option if it set and valid; otherwise, <see langword="null" />.</param>
+    /// <returns><see langword="true"/> if the regex pattern was successfully loaded; otherwise, <see langword="false"/>.</returns>
+    public static bool TryReadRegexPattern(
         this CompilationStartAnalysisContext context,
         string patternOptionName,
-        string diagnosticId)
+        string diagnosticId,
+        out string? regexPattern)
     {
         if (context is null)
         {
@@ -31,7 +33,7 @@ public static class CompilationStartAnalysisContextExtensions
 
         SyntaxTree syntaxTree = context.Compilation.SyntaxTrees.First();
         AnalyzerConfigOptions options = context.Options.AnalyzerConfigOptionsProvider.GetOptions(syntaxTree);
-        if (options.TryGetValue(patternOptionName, out string? regexPattern))
+        if (options.TryGetValue(patternOptionName, out regexPattern))
         {
             if (!StringUtilities.IsValidRegexPattern(regexPattern))
             {
@@ -48,13 +50,13 @@ public static class CompilationStartAnalysisContextExtensions
                 {
                     compilationAnalysisContext.ReportDiagnostic(diagnostic);
                 });
+
+                regexPattern = null;
             }
-            else
-            {
-                return regexPattern;
-            }
+
+            return true;
         }
 
-        return null;
+        return false;
     }
 }
