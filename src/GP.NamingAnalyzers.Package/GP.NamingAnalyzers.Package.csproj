@@ -22,6 +22,7 @@
     <PackageTags>GP.NamingAnalyzers, Roslyn, CodeAnalysis, Analyzers, Naming</PackageTags>
     <DevelopmentDependency>true</DevelopmentDependency>
     <NoPackageAnalysis>true</NoPackageAnalysis>
+    <NoDefaultExcludes>true</NoDefaultExcludes>
     <TargetsForTfmSpecificContentInPackage>$(TargetsForTfmSpecificContentInPackage);_AddAnalyzersToOutput</TargetsForTfmSpecificContentInPackage>
   </PropertyGroup>
 
@@ -42,6 +43,10 @@
 
   <ItemGroup>
     <None Update="tools\*.ps1" CopyToOutputDirectory="PreserveNewest" Pack="true" PackagePath="" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="editorconfig\**" Pack="true" PackagePath="editorconfig" />
   </ItemGroup>
 
   <Target Name="_AddAnalyzersToOutput">
