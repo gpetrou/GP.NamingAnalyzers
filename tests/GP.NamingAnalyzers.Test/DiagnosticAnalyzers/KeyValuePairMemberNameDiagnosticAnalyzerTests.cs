@@ -45,6 +45,35 @@ public sealed class KeyValuePairMemberNameDiagnosticAnalyzerTests
     }
 
     [Fact]
+    public async Task Analyze_WhenCustomRegexPatternOptionIsInvalid_ShouldReportADiagnostic()
+    {
+        string sourceCode = @"
+using System;
+using System.Collections.Generic;
+
+namespace N
+{
+    public class Example
+    {
+        private KeyValuePair<int, string> _myKeyValuePair;
+    }
+}";
+        Dictionary<string, string> optionValuesByOptionName = new() { { "dotnet_diagnostic.GPNA0003.pattern", "[" } };
+
+        DiagnosticResult[] expectedDiagnosticResults = new DiagnosticResult[]
+        {
+            new DiagnosticResult("GPNA0003", DiagnosticSeverity.Error)
+                .WithMessage("'[' is an invalid regex pattern")
+        };
+
+        await VerifyCS.VerifyAnalyzerAsync(
+            sourceCode,
+            uniqueAdditionalPackageIdentities: null,
+            optionValuesByOptionName,
+            expectedDiagnosticResults);
+    }
+
+    [Fact]
     public async Task Analyze_WhenMembersAreNotKeyValuePairs_ShouldNotReportADiagnostic()
     {
         string sourceCode = @"

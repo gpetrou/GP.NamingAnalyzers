@@ -176,7 +176,12 @@ public sealed class DictionaryMemberNameDiagnosticAnalyzer : DiagnosticAnalyzer
 
             if (dictionarySymbols.Count > 0)
             {
-                string? regexPattern = compilationStartAnalysisContext.ReadRegexPattern(PatternOptionName, DiagnosticId);
+                bool isRead = compilationStartAnalysisContext.TryReadRegexPattern(PatternOptionName, DiagnosticId, out string? regexPattern);
+                if (isRead && regexPattern is null)
+                {
+                    return;
+                }
+
                 if (regexPattern is not null && _regexPattern != regexPattern)
                 {
                     _regexPattern = regexPattern;
