@@ -1,10 +1,31 @@
 ﻿<Project>
 
   <Target Condition=" '$(IsTestProject)' == 'false' "
-          Name="SetAssemblyInfoVersions"
-          AfterTargets="PrepareForBuild"
-          BeforeTargets="GenerateAssemblyInfo;GetPackageMetadata;GenerateNuspec;Pack"
-          DependsOnTargets="GitVersion;AddSourceRevisionToInformationalVersion">
+    Name="SetGitVersionDependsOn"
+    AfterTargets="PrepareForBuild"
+    BeforeTargets="SetGitExe">
+
+    <PropertyGroup>
+      <GitVersionDependsOn>
+        GitInfo;
+        _GitBaseVersionFile;
+        _GitBaseVersionBranch;
+        _GitBaseVersionTagExists;
+        _GitBaseVersionTag;
+        _GitBaseVersionFallback;
+        _GitValidateBaseVersion;
+        _GitPopulateVersionInfo;
+        _GitWriteCache
+      </GitVersionDependsOn>
+    </PropertyGroup>
+
+  </Target>
+
+  <Target Condition=" '$(IsTestProject)' == 'false' "
+    Name="SetAssemblyInfoVersions"
+    AfterTargets="PrepareForBuild"
+    BeforeTargets="GenerateAssemblyInfo;GetPackageMetadata;GenerateNuspec;Pack"
+    DependsOnTargets="GitVersion;AddSourceRevisionToInformationalVersion">
 
     <PropertyGroup>
       <AssemblyVersion>$(GitBaseVersion)</AssemblyVersion>
