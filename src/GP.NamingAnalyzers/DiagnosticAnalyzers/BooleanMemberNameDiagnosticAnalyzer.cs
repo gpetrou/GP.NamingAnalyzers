@@ -156,35 +156,36 @@ public sealed class BooleanMemberNameDiagnosticAnalyzer : DiagnosticAnalyzer
         context.RegisterCompilationStartAction(compilationStartAnalysisContext =>
         {
             INamedTypeSymbol? booleanSymbol = compilationStartAnalysisContext.Compilation.GetTypeByMetadataName(typeof(bool).FullName);
-
-            if (booleanSymbol is not null)
+            if (booleanSymbol is null)
             {
-                bool isRead = compilationStartAnalysisContext.TryReadRegexPattern(PatternOptionName, DiagnosticId, out string? regexPattern);
-                if (isRead && regexPattern is null)
-                {
-                    return;
-                }
-
-                if (regexPattern is not null && _regexPattern != regexPattern)
-                {
-                    _regexPattern = regexPattern;
-                    _diagnosticMessageEnd = string.Format(CultureInfo.InvariantCulture, CustomRegexPatternMessageEnd, _regexPattern);
-                }
-                else if (_regexPattern != DefaultRegexPattern)
-                {
-                    _regexPattern = DefaultRegexPattern;
-                    _diagnosticMessageEnd = DefaultDiagnosticMessageEnd;
-                }
-
-                compilationStartAnalysisContext.RegisterSymbolAction(
-                    symbolAnalysisContext => AnalyzeSymbol(symbolAnalysisContext, booleanSymbol),
-                    SymbolKind.Field,
-                    SymbolKind.Property,
-                    SymbolKind.Parameter);
-                compilationStartAnalysisContext.RegisterOperationAction(
-                    operationAnalysisContext => AnalyzeOperation(operationAnalysisContext, booleanSymbol),
-                    OperationKind.VariableDeclarationGroup);
+                return;
             }
+
+            bool isRead = compilationStartAnalysisContext.TryReadRegexPattern(PatternOptionName, DiagnosticId, out string? regexPattern);
+            if (isRead && regexPattern is null)
+            {
+                return;
+            }
+
+            if (regexPattern is not null && _regexPattern != regexPattern)
+            {
+                _regexPattern = regexPattern;
+                _diagnosticMessageEnd = string.Format(CultureInfo.InvariantCulture, CustomRegexPatternMessageEnd, _regexPattern);
+            }
+            else if (_regexPattern != DefaultRegexPattern)
+            {
+                _regexPattern = DefaultRegexPattern;
+                _diagnosticMessageEnd = DefaultDiagnosticMessageEnd;
+            }
+
+            compilationStartAnalysisContext.RegisterSymbolAction(
+                symbolAnalysisContext => AnalyzeSymbol(symbolAnalysisContext, booleanSymbol),
+                SymbolKind.Field,
+                SymbolKind.Property,
+                SymbolKind.Parameter);
+            compilationStartAnalysisContext.RegisterOperationAction(
+                operationAnalysisContext => AnalyzeOperation(operationAnalysisContext, booleanSymbol),
+                OperationKind.VariableDeclarationGroup);
         });
     }
 }
