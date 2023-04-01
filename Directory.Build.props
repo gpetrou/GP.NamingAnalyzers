@@ -46,6 +46,7 @@
   <!-- Properties used only by the main projects. -->
   <PropertyGroup Condition=" '$(IsTestProject)' == 'false' ">
     <GitDefaultBranch>main</GitDefaultBranch>
+    <GitCommitsIgnoreMerges>true</GitCommitsIgnoreMerges>
     <GitVersionFile>Version.txt</GitVersionFile>
     <GitBaseVersionRegex>^\d+\.\d+\.\d+$</GitBaseVersionRegex>
     <GitTagRegex>[0-9]*.[0-9]*.[0-9]*</GitTagRegex>
