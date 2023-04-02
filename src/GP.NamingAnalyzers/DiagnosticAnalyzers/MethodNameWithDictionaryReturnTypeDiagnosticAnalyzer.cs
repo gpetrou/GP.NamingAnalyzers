@@ -89,7 +89,7 @@ public sealed class MethodNameWithDictionaryReturnTypeDiagnosticAnalyzer : Diagn
     /// <inheritdoc/>
     public override void Initialize(AnalysisContext context)
     {
-        if (context == null)
+        if (context is null)
         {
             throw new ArgumentNullException(nameof(context));
         }
