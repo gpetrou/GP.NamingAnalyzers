@@ -11,3 +11,4 @@ The naming analyzers contain the following collection of rules:
 [GPNA0005](GPNA0005.md) | MockedMemberNameDiagnosticAnalyzer | The name of a mocked member should follow the 'mocked' naming convention. |
 [GPNA0101](GPNA0101.md) | TestMethodNameDiagnosticAnalyzer | The name of a test method should follow the 'MethodUnderTest_When_Should' naming convention. |
 [GPNA0102](GPNA0102.md) | MethodNameWithKeyValuePairReturnTypeDiagnosticAnalyzer | The name of a method that returns a key/value pair should follow the 'GetXByY' naming convention. |
+[GPNA0102](GPNA0103.md) | MethodNameWithDictionaryReturnTypeDiagnosticAnalyzer | The name of a method that returns a dictionary should follow the 'GetXsByY' naming convention. |
