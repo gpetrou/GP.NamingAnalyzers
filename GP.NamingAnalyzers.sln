@@ -49,10 +49,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{38E22441-5
 		docs\GPNA0005.md = docs\GPNA0005.md
 		docs\GPNA0101.md = docs\GPNA0101.md
 		docs\GPNA0102.md = docs\GPNA0102.md
+		docs\GPNA0103.md = docs\GPNA0103.md
 		docs\Rules.md = docs\Rules.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GP.NamingAnalyzers.EditorConfigGenerator", "src\GP.NamingAnalyzers.EditorConfigGenerator\GP.NamingAnalyzers.EditorConfigGenerator.csproj", "{96C0F944-8D22-49D7-8E81-160E88BA1981}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GP.NamingAnalyzers.EditorConfigGenerator", "src\GP.NamingAnalyzers.EditorConfigGenerator\GP.NamingAnalyzers.EditorConfigGenerator.csproj", "{96C0F944-8D22-49D7-8E81-160E88BA1981}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

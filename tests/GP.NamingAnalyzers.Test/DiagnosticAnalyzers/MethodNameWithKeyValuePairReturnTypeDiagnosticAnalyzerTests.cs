@@ -19,7 +19,7 @@ public sealed class MethodNameWithKeyValuePairReturnTypeDiagnosticAnalyzerTests
     [InlineData("Get")]
     [InlineData("GetMyKeyValuePair")]
     [InlineData("GetXByYKeyValuePair")]
-    public void IsKeyValuePairNameValid_WhenNameIsInvalid_ShouldReturnFalse(string keyValuePairName)
+    public void IsKeyValuePairMethodNameValid_WhenNameIsInvalid_ShouldReturnFalse(string keyValuePairName)
     {
         bool isNameValid = MethodNameWithKeyValuePairReturnTypeDiagnosticAnalyzer.IsKeyValuePairMethodNameValid(keyValuePairName, MethodNameWithKeyValuePairReturnTypeDiagnosticAnalyzer.DefaultRegexPattern);
 
@@ -29,7 +29,7 @@ public sealed class MethodNameWithKeyValuePairReturnTypeDiagnosticAnalyzerTests
     [Theory]
     [InlineData("GetXByY")]
     [InlineData("GetItemById")]
-    public void IsKeyValuePairNameValid_WhenNameIsValid_ShouldReturnTrue(string keyValuePairName)
+    public void IsKeyValuePairMethodNameValid_WhenNameIsValid_ShouldReturnTrue(string keyValuePairName)
     {
         bool isNameValid = MethodNameWithKeyValuePairReturnTypeDiagnosticAnalyzer.IsKeyValuePairMethodNameValid(keyValuePairName, MethodNameWithKeyValuePairReturnTypeDiagnosticAnalyzer.DefaultRegexPattern);
 
