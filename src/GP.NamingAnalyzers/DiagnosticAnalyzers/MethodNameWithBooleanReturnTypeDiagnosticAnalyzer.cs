@@ -11,26 +11,26 @@ using Microsoft.CodeAnalysis.Diagnostics;
 namespace GP.NamingAnalyzers.DiagnosticAnalyzers;
 
 /// <summary>
-/// An analyzer to validate the name of methods that return a set.
+/// An analyzer to validate the name of methods that return a boolean.
 /// </summary>
 [DiagnosticAnalyzer(LanguageNames.CSharp)]
-public sealed class MethodNameWithSetReturnTypeDiagnosticAnalyzer : DiagnosticAnalyzer
+public sealed class MethodNameWithBooleanReturnTypeDiagnosticAnalyzer : DiagnosticAnalyzer
 {
-    private const string DiagnosticId = "GPNA0104";
-    private const string Title = "Incorrect name of method that returns a set";
+    private const string DiagnosticId = "GPNA0105";
+    private const string Title = "Incorrect name of method that returns a boolean";
     private const string MessageFormat = "Method '{0}' does not {1}";
-    private const string Description = "A method that returns a set should follow the naming convention.";
+    private const string Description = "A method that returns a boolean should follow the naming convention.";
     private const string Category = "Naming";
     private const string HelpLinkUri = $"https://github.com/gpetrou/GP.NamingAnalyzers/tree/main/docs/{DiagnosticId}.md";
 
     private const string PatternOptionName = $"dotnet_diagnostic.{DiagnosticId}.pattern";
-    private const string DefaultDiagnosticMessageEnd = "follow the 'GetUniqueXs' naming convention";
+    private const string DefaultDiagnosticMessageEnd = "follow the 'Can|Has|Is' naming convention";
     private const string CustomRegexPatternMessageEnd = "match the '{0}' regex pattern";
 
     /// <summary>
     /// The default regex pattern.
     /// </summary>
-    public const string DefaultRegexPattern = "^GetUnique[A-Z][a-zA-Z0-9]*s(?<!Set)$";
+    public const string DefaultRegexPattern = "^(Can|Has|Is)[A-Z][a-zA-Z0-9]*$";
 
     private static readonly DiagnosticDescriptor DiagnosticDescriptor = new(
         DiagnosticId,
@@ -49,12 +49,12 @@ public sealed class MethodNameWithSetReturnTypeDiagnosticAnalyzer : DiagnosticAn
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => ImmutableArray.Create(DiagnosticDescriptor);
 
     /// <summary>
-    /// Returns a value indicating whether the provided name of a method that returns a set is valid.
+    /// Returns a value indicating whether the provided name of a method that returns a boolean is valid.
     /// </summary>
     /// <param name="name">The name to validate.</param>
     /// <param name="regexPattern">The regex pattern to use during validation.</param>
-    /// <returns><see langword="true"/> if the provided name of a method that returns a set is valid; otherwise, <see langword="false"/>.</returns>
-    public static bool IsSetMethodNameValid(string name, string regexPattern) =>
+    /// <returns><see langword="true"/> if the provided name of a method that returns a boolean is valid; otherwise, <see langword="false"/>.</returns>
+    public static bool IsBooleanMethodNameValid(string name, string regexPattern) =>
         !string.IsNullOrWhiteSpace(name) &&
         Regex.IsMatch(name, regexPattern, RegexOptions.Compiled);
 
@@ -62,15 +62,15 @@ public sealed class MethodNameWithSetReturnTypeDiagnosticAnalyzer : DiagnosticAn
     /// Analyzes a symbol.
     /// </summary>
     /// <param name="context">An instance of <see cref="SymbolAnalysisContext"/>.</param>
-    /// <param name="setInterfaceSymbol">The set interface symbol.</param>
-    private void AnalyzeSymbol(SymbolAnalysisContext context, INamedTypeSymbol setInterfaceSymbol)
+    /// <param name="booleanSymbol">The boolean symbol.</param>
+    private void AnalyzeSymbol(SymbolAnalysisContext context, ISymbol booleanSymbol)
     {
         ISymbol symbol = context.Symbol;
         if (symbol is IMethodSymbol methodSymbol &&
             methodSymbol.MethodKind == MethodKind.Ordinary &&
             !methodSymbol.IsOverride &&
-            methodSymbol.ReturnType.HasOriginalDefinitionOrImplementsNamedTypeSymbolInterface(setInterfaceSymbol) &&
-            !IsSetMethodNameValid(methodSymbol.Name, _regexPattern))
+            methodSymbol.ReturnType.OriginalDefinition.Equals(booleanSymbol, SymbolEqualityComparer.Default) &&
+            !IsBooleanMethodNameValid(methodSymbol.Name, _regexPattern))
         {
             Diagnostic diagnostic = Diagnostic.Create(
                 DiagnosticDescriptor,
@@ -93,8 +93,10 @@ public sealed class MethodNameWithSetReturnTypeDiagnosticAnalyzer : DiagnosticAn
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.RegisterCompilationStartAction(compilationStartAnalysisContext =>
         {
-            INamedTypeSymbol? setInterfaceSymbol = compilationStartAnalysisContext.Compilation.GetTypeByMetadataName(typeof(ISet<>).FullName);
-            if (setInterfaceSymbol is null)
+            INamedTypeSymbol? booleanSymbol =
+                compilationStartAnalysisContext.Compilation.GetTypeByMetadataName(typeof(bool).FullName);
+
+            if (booleanSymbol is null)
             {
                 return;
             }
@@ -117,7 +119,7 @@ public sealed class MethodNameWithSetReturnTypeDiagnosticAnalyzer : DiagnosticAn
             }
 
             compilationStartAnalysisContext.RegisterSymbolAction(
-                symbolAnalysisContext => AnalyzeSymbol(symbolAnalysisContext, setInterfaceSymbol),
+                symbolAnalysisContext => AnalyzeSymbol(symbolAnalysisContext, booleanSymbol),
                 SymbolKind.Method);
         });
     }
