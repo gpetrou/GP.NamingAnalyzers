@@ -71,6 +71,7 @@ public sealed class MethodNameWithDictionaryReturnTypeDiagnosticAnalyzer : Diagn
         {
             if (symbol is IMethodSymbol methodSymbol &&
                 methodSymbol.MethodKind == MethodKind.Ordinary &&
+                !methodSymbol.IsOverride &&
                 methodSymbol.ReturnType.HasOriginalDefinitionOrImplementsNamedTypeSymbolInterface(dictionarySymbol) &&
                 !IsDictionaryMethodNameValid(methodSymbol.Name, _regexPattern))
             {

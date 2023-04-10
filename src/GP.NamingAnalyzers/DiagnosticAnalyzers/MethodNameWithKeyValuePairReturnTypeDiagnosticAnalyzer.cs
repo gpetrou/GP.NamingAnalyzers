@@ -68,6 +68,7 @@ public sealed class MethodNameWithKeyValuePairReturnTypeDiagnosticAnalyzer : Dia
         ISymbol symbol = context.Symbol;
         if (symbol is IMethodSymbol methodSymbol &&
             methodSymbol.MethodKind == MethodKind.Ordinary &&
+            !methodSymbol.IsOverride &&
             methodSymbol.ReturnType.OriginalDefinition.Equals(keyValuePairSymbol, SymbolEqualityComparer.Default) &&
             !IsKeyValuePairMethodNameValid(methodSymbol.Name, _regexPattern))
         {

@@ -13,3 +13,4 @@ The naming analyzers contain the following collection of rules:
 [GPNA0102](GPNA0102.md) | MethodNameWithKeyValuePairReturnTypeDiagnosticAnalyzer | The name of a method that returns a key/value pair should follow the 'GetXByY' naming convention. |
 [GPNA0103](GPNA0103.md) | MethodNameWithDictionaryReturnTypeDiagnosticAnalyzer | The name of a method that returns a dictionary should follow the 'GetXsByY' naming convention. |
 [GPNA0104](GPNA0104.md) | MethodNameWithSetReturnTypeDiagnosticAnalyzer | The name of a method that returns a set should follow the 'GetUniqueXs' naming convention. |
+[GPNA0105](GPNA0105.md) | MethodNameWithBooleanReturnTypeDiagnosticAnalyzer | The name of a method that returns a boolean should follow the 'Can|Has|Is' naming convention. |

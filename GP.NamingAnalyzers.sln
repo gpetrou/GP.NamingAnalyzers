@@ -51,6 +51,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "docs", "docs", "{38E22441-5
 		docs\GPNA0102.md = docs\GPNA0102.md
 		docs\GPNA0103.md = docs\GPNA0103.md
 		docs\GPNA0104.md = docs\GPNA0104.md
+		docs\GPNA0105.md = docs\GPNA0105.md
 		docs\Rules.md = docs\Rules.md
 	EndProjectSection
 EndProject

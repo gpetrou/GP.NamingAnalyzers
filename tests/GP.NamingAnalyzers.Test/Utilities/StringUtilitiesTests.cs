@@ -26,6 +26,7 @@ public sealed class StringUtilitiesTests
     [InlineData(BooleanMemberNameDiagnosticAnalyzer.DefaultRegexPattern)]
     [InlineData(DictionaryMemberNameDiagnosticAnalyzer.DefaultRegexPattern)]
     [InlineData(KeyValuePairMemberNameDiagnosticAnalyzer.DefaultRegexPattern)]
+    [InlineData(MethodNameWithBooleanReturnTypeDiagnosticAnalyzer.DefaultRegexPattern)]
     [InlineData(MethodNameWithDictionaryReturnTypeDiagnosticAnalyzer.DefaultRegexPattern)]
     [InlineData(MethodNameWithKeyValuePairReturnTypeDiagnosticAnalyzer.DefaultRegexPattern)]
     [InlineData(MethodNameWithSetReturnTypeDiagnosticAnalyzer.DefaultRegexPattern)]
